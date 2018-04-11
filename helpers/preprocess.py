@@ -26,7 +26,7 @@ def get_role_list(people, role):
         if person['job'] == role:
             crew.append(person['name'])
     
-    return list_of_str_to_str(crew) if len(crew) else np.nan
+    return crew if len(crew) else np.nan
 
 def remove_rows_without_revenue_cost(df):
 	# returns a pandas dataframe
@@ -84,6 +84,44 @@ def remove_rows_with_non_ascii(df):
 	    df = df[df[col].apply(is_all_ascii)]
 
 	return df
+
+def get_avg_scores(df, component):
+    ratings = {}
+    min_vote_count = 1000
+
+    movies = df[df['vote_count'] > min_vote_count]
+
+    for index, row in movies.iterrows():
+        group = row[component]
+        
+        # handle director case that isn't wrapped by []
+        try:
+            group = ast.literal_eval(group)
+        except:
+            group = [group]
+        
+        for item in group:
+            item_key = item.lower().replace(' ', '_')
+
+            if item_key not in ratings:
+                ratings[item_key] = {
+                    'num_movies': 1,
+                    'total_score': row['vote_average'],
+                    'avg_score': row['vote_average']
+                }
+            else:
+                ratings[item_key]['num_movies'] += 1
+                ratings[item_key]['total_score'] += row['vote_average']
+                ratings[item_key]['avg_score'] = ratings[item_key]['total_score'] / ratings[item_key]['num_movies']
+                
+    return ratings
+
+def get_movie_scores(df):
+	actor_ratings = get_avg_scores(df, 'cast')
+	director_ratings = get_avg_scores(df, 'director')
+	production_company_ratings = get_avg_scores(df, 'production_companies')
+	producer_ratings = get_avg_scores(df, 'producers')
+	executive_producers_ratings = get_avg_scores(df, 'executive_producers')
 
 def preprocess_data(df):
 	df = remove_rows_without_revenue_cost(df)
