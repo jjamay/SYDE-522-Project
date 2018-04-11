@@ -54,20 +54,6 @@ def add_executive_producers_feature(df):
 	df['executive_producers'] = df['crew'].apply(get_role_list, role='Executive Producer')
 	return df
 
-def convert_columns_with_list_of_str_to_str(df):
-	columns_with_list_of_str = [
-	    'genres', 
-	    'production_countries', 
-	    'production_companies', 
-	    'cast', 
-	    'keywords',
-	]
-
-	for col in columns_with_list_of_str:
-	    df[col] = df[col].apply(lambda x: list_of_str_to_str(ast.literal_eval(x)) if x != np.nan else x)
-
-	return df
-
 def remove_rows_with_non_ascii(df):
 	text_cols = [
 	    'genres',
@@ -180,14 +166,14 @@ def get_movie_scores(df):
 	
 	df['production_score'] = df.apply(calculate_final_production_score, ratings=ratings, axis=1)
 	return df
-	
+
 def preprocess_data(df):
+	# note that order matters!
 	df = remove_rows_without_revenue_cost(df)
 	df = remove_rows_with_non_english_movies(df)
 	df = binarize_homepage(df)
 	df = add_producers_feature(df)
 	df = add_executive_producers_feature(df)
-	# df = convert_columns_with_list_of_str_to_str(df)
 	df = remove_rows_with_non_ascii(df)
 	df = get_movie_scores(df)
 	return df
