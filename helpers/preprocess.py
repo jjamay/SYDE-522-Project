@@ -3,17 +3,21 @@ import numpy as np
 import string
 import pandas as pd 
 
+CREW_ATTRIBUTES = ['cast', 'director', 'production_companies', 'producers', 'executive_producers']
 
 def is_all_ascii(chars):
-    if pd.isnull(chars):
-        return True
-    
-    printable = set(string.printable)
-    for char in chars:
-        if char not in printable:
-            return False
+	if type(chars) == type([]):
+		chars = list_of_str_to_str(chars)
 
-    return True
+	if pd.isnull(chars):
+		return True
+
+	printable = set(string.printable)
+	for char in chars:
+		if char not in printable:
+			return False
+
+	return True
 
 def list_of_str_to_str(list_of_str):
     return " ".join(list_of_str) if type(list_of_str) == list else list_of_str
@@ -24,9 +28,9 @@ def get_role_list(people, role):
     
     for person in people:
         if person['job'] == role:
-            crew.append(person['name'])
+            crew.append(str(person['name']))
     
-    return crew if len(crew) else np.nan
+    return crew if len(crew) else []
 
 def remove_rows_without_revenue_cost(df):
 	# returns a pandas dataframe
@@ -85,23 +89,41 @@ def remove_rows_with_non_ascii(df):
 
 	return df
 
-def get_avg_scores(df, component):
+def generate_name_key(str):
+	'''
+	examples of str: Tom Hanks, Michael, Michael Buble Test
+	'''
+
+	return str.decode('utf-8').lower().replace(' ', '_')
+
+def get_literal_eval(data):
+	'''
+	probably could use a better name
+	returns literal_eval or returns original data in list form (for director)
+	'''
+
+	if type(data) != type([]):
+		try:
+			return ast.literal_eval(data)
+		except:
+			return [data] if data is not np.nan else []
+
+	return data
+
+def get_avg_scores_for_attribute(df, attribute):
     ratings = {}
     min_vote_count = 1000
 
     movies = df[df['vote_count'] > min_vote_count]
 
     for index, row in movies.iterrows():
-        group = row[component]
+        group = row[attribute]
         
         # handle director case that isn't wrapped by []
-        try:
-            group = ast.literal_eval(group)
-        except:
-            group = [group]
+        group = get_literal_eval(group)
         
         for item in group:
-            item_key = item.lower().replace(' ', '_')
+            item_key = generate_name_key(item)
 
             if item_key not in ratings:
                 ratings[item_key] = {
@@ -116,19 +138,56 @@ def get_avg_scores(df, component):
                 
     return ratings
 
-def get_movie_scores(df):
-	actor_ratings = get_avg_scores(df, 'cast')
-	director_ratings = get_avg_scores(df, 'director')
-	production_company_ratings = get_avg_scores(df, 'production_companies')
-	producer_ratings = get_avg_scores(df, 'producers')
-	executive_producers_ratings = get_avg_scores(df, 'executive_producers')
+def calculate_total_score(data, ratings):
+    '''
+    calculates total score for actors, production_companies, etc.
+    '''
+    
+    total_score = 0
+    
+    for x in data:
+        x_key = generate_name_key(x)
+        total_score += ratings[x_key]['avg_score'] if x_key in ratings else 0
+    
+    return total_score
+    
+def calculate_final_production_score(row, ratings):
+    scores = {}
+    
+    for x in CREW_ATTRIBUTES:
+        data = row[x]
+        
+        # handle director case that isn't wrapped by []
+        data = get_literal_eval(data)
+        
+        total_score = calculate_total_score(data, ratings[x])
 
+        # more famous actors usually means higher review (e.g. Ocean's 11)
+        if x == 'cast':
+            scores[x] = total_score
+        elif len(data):
+            scores[x] = total_score/len(data)
+    
+    final_score = sum(scores.values())
+    
+    return final_score
+
+def get_movie_scores(df):
+	ratings = {}
+
+	for x in CREW_ATTRIBUTES:
+		ratings[x] = get_avg_scores_for_attribute(df, x) 
+	
+	df['production_score'] = df.apply(calculate_final_production_score, ratings=ratings, axis=1)
+	return df
+	
 def preprocess_data(df):
 	df = remove_rows_without_revenue_cost(df)
 	df = remove_rows_with_non_english_movies(df)
 	df = binarize_homepage(df)
 	df = add_producers_feature(df)
 	df = add_executive_producers_feature(df)
-	df = convert_columns_with_list_of_str_to_str(df)
+	# df = convert_columns_with_list_of_str_to_str(df)
 	df = remove_rows_with_non_ascii(df)
+	df = get_movie_scores(df)
 	return df
