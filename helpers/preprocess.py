@@ -23,8 +23,21 @@ CREW_ATTRIBUTES = ['cast', 'director', 'production_companies', 'producers', 'exe
 #     return True
 
 
-# def list_of_str_to_str(list_of_str):
-#     return " ".join(list_of_str) if type(list_of_str) == list else list_of_str
+def list_of_str_to_str(list_of_str):
+    list_of_str = get_literal_eval(list_of_str)
+
+    # remove non unicode words
+    for word in list_of_str:
+        word = word.replace(u'\xa0', u' ')
+        
+        try:
+            word.encode()
+        except:
+            print(word)
+            list_of_str.remove(word)
+            print(list_of_str)
+
+    return " ".join(list_of_str)
 
 
 def get_role_list(people, role):
@@ -234,6 +247,11 @@ def parse_production_countries(df):
     return df
 
 
+def convert_keywords_to_string(df):
+    df['keywords'] = df['keywords'].apply(list_of_str_to_str)
+    return df
+
+
 def drop_unnecessary_columns(df):
     df = df.drop([
         'id',
@@ -244,7 +262,6 @@ def drop_unnecessary_columns(df):
         'weighted_rating',
         'original_title',
         'crew',
-        'revenue_divide_budget',
         'producers',
         'executive_producers',
         'cast',
@@ -258,7 +275,8 @@ def drop_unnecessary_columns(df):
         'release_date',  # ADD BACK IN WHEN READY
         'overview',
         'title',
-        'tagline'
+        'tagline',
+        'vote_average'
     ], 1)
     return df
 
@@ -277,5 +295,6 @@ def preprocess_data(df):
     df = binarize_genres(df)
     df = binarize_belongs_to_collection(df)
     df = parse_production_countries(df)
+    df = convert_keywords_to_string(df)
     df = drop_unnecessary_columns(df)
     return df
