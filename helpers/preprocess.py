@@ -229,8 +229,25 @@ def get_movie_scores(df):
     return df
 
 
-def parse_production_countries(df):
+def binarize_production_countries(df):
     df['production_countries'] = df['production_countries'].apply(lambda x: get_literal_eval(x))
+    countries = {
+        'United States of America': 'usa',
+        'United Kingdom': 'uk',
+        'France': 'france'
+    }
+
+    for country, short in countries.iteritems():
+        df['prod_{}'.format(short)] = df['production_countries'].apply(lambda x: 1 if country in x else 0)
+
+    def check_other(prod_countries):
+        for c in prod_countries:
+            if c not in countries:
+                return 1
+        return 0
+
+    df['prod_other'] = df['production_countries'].apply(check_other)
+
     return df
 
 
@@ -250,6 +267,7 @@ def drop_unnecessary_columns(df):
         'cast',
         'director',
         'production_companies',
+        'production_countries',
         'genres',
         'original_language',
         'revenue',
@@ -273,6 +291,5 @@ def preprocess_data(df):
     df = bin_ratings(df)
     df = binarize_genres(df)
     df = binarize_belongs_to_collection(df)
-    df = parse_production_countries(df)
-    df = drop_unnecessary_columns(df)
+    df = binarize_production_countries(df)
     return df
