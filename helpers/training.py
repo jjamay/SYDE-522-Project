@@ -28,7 +28,10 @@ class TrainingData:
             # ('budget', None), # transform finds str? empty space?
             ('homepage', None),
             ('popularity', None),
-            # ('production_countries', HashingVectorizer(n_features=N)),
+            ('prod_usa', None),
+            ('prod_uk', None),
+            ('prod_france', None),
+            ('prod_other', None),
         #    ('release_date', None),
             # ('runtime', None), # transform finds str? empty space?
             ('spoken_languages', None),
