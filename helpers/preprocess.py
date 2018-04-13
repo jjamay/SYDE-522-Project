@@ -25,19 +25,26 @@ CREW_ATTRIBUTES = ['cast', 'director', 'production_companies', 'producers', 'exe
 
 def list_of_str_to_str(list_of_str):
     list_of_str = get_literal_eval(list_of_str)
+    to_remove = []
 
     # remove non unicode words
-    for word in list_of_str:
-        word = word.replace(u'\xa0', u' ')
-        
+    for i in range(len(list_of_str)):
+        list_of_str[i] = list_of_str[i].replace('\xa0', ' ')
+        word = list_of_str[i]
+
+        if any(char.isdigit() for char in word):
+            to_remove.append(word)
+
         try:
-            word.encode()
+            word.decode()
         except:
             print(word)
-            list_of_str.remove(word)
             print(list_of_str)
-
-    return " ".join(list_of_str)
+            if word not in to_remove:
+                to_remove.append(word)
+    
+    filtered_list_of_str = [word for word in list_of_str if word not in to_remove]
+    return " ".join(filtered_list_of_str)
 
 
 def get_role_list(people, role):

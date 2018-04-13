@@ -25,14 +25,14 @@ class TrainingData:
     def generate_features(self, data):
         mapper = DataFrameMapper([
             ('belongs_to_collection', None),
-            ('budget', None),
+            # ('budget', None), # transform finds str? empty space?
             ('homepage', None),
             ('popularity', None),
             # ('production_countries', HashingVectorizer(n_features=N)),
         #    ('release_date', None),
-            ('runtime', None),
+            # ('runtime', None), # transform finds str? empty space?
             ('spoken_languages', None),
-            ('keywords', HashingVectorizer(n_features=N)),
+            # ('keywords', HashingVectorizer(n_features=N)),
             ('cast_size', None),
             ('crew_size', None),
             ('production_score', None),
