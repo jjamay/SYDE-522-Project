@@ -118,7 +118,8 @@ def binarize_genres(df):
         'War',
         'Western',
         'Documentary',
-        'Foreign'
+        'Foreign',
+        'TV Movie'
     ]
 
     for genre in genres:
@@ -323,4 +324,6 @@ def preprocess_data(df, min_vote_count=1000):
     df = binarize_belongs_to_collection(df)
     df = binarize_production_countries(df)
     df = convert_keywords_to_string(df)
+    df = drop_unnecessary_columns(df)
+    df = fill_empty_values(df)
     return df
