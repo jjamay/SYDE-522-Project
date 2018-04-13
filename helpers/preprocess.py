@@ -64,9 +64,6 @@ def binarize_homepage(df):
     return df
 
 
-def 
-
-
 def binarize_belongs_to_collection(df):
     df['belongs_to_collection'] = df['belongs_to_collection'].apply(lambda x: 0 if x == np.nan else 1)
     return df
@@ -232,6 +229,11 @@ def get_movie_scores(df):
     return df
 
 
+def parse_production_countries(df):
+    df['production_countries'] = df['production_countries'].apply(lambda x: get_literal_eval(x))
+    return df
+
+
 def drop_unnecessary_columns(df):
     df = df.drop([
         'id',
@@ -271,5 +273,6 @@ def preprocess_data(df):
     df = bin_ratings(df)
     df = binarize_genres(df)
     df = binarize_belongs_to_collection(df)
-    df = drop_unnecessary columns(df)
+    df = parse_production_countries(df)
+    df = drop_unnecessary_columns(df)
     return df
