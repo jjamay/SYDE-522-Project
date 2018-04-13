@@ -255,7 +255,10 @@ def drop_unnecessary_columns(df):
         'revenue',
         'vote_count',
         'adult',
-        'release_date'  # ADD BACK IN WHEN READY
+        'release_date',  # ADD BACK IN WHEN READY
+        'overview',
+        'title',
+        'tagline'
     ], 1)
     return df
 
