@@ -1,6 +1,5 @@
 import ast
 import numpy as np
-import string
 import pandas as pd
 
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -38,11 +37,9 @@ def list_of_str_to_str(list_of_str):
         try:
             word.decode()
         except:
-            print(word)
-            print(list_of_str)
             if word not in to_remove:
                 to_remove.append(word)
-    
+
     filtered_list_of_str = [word for word in list_of_str if word not in to_remove]
     return " ".join(filtered_list_of_str)
 
@@ -276,6 +273,11 @@ def convert_keywords_to_string(df):
     return df
 
 
+def fill_empty_values(df):
+    df = df.fillna(df.mean())
+    return df
+
+
 def drop_unnecessary_columns(df):
     df = df.drop([
         'id',
@@ -301,7 +303,8 @@ def drop_unnecessary_columns(df):
         'overview',
         'title',
         'tagline',
-        'vote_average'
+        'vote_average',
+        'revenue_divide_budget'
     ], 1)
     return df
 
@@ -321,5 +324,4 @@ def preprocess_data(df):
     df = binarize_belongs_to_collection(df)
     df = binarize_production_countries(df)
     df = convert_keywords_to_string(df)
-    df = drop_unnecessary_columns(df)
     return df
