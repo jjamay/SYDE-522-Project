@@ -2,6 +2,7 @@ from pandas import DataFrame, read_csv
 from sklearn.model_selection import train_test_split
 from sklearn_pandas import DataFrameMapper
 from sklearn.feature_extraction.text import HashingVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd 
 import numpy as np
 
@@ -25,7 +26,7 @@ class TrainingData:
     def generate_features(self, data):
         mapper = DataFrameMapper([
             ('belongs_to_collection', None),
-            # ('budget', None), # transform finds str? empty space?
+            ('budget', None),
             ('homepage', None),
             ('popularity', None),
             ('prod_usa', None),
@@ -33,9 +34,9 @@ class TrainingData:
             ('prod_france', None),
             ('prod_other', None),
         #    ('release_date', None),
-            # ('runtime', None), # transform finds str? empty space?
+            ('runtime', None),
             ('spoken_languages', None),
-            ('keywords', HashingVectorizer(n_features=N)),
+            ('keywords', TfidfVectorizer()),
             ('cast_size', None),
             ('crew_size', None),
             ('production_score', None),
