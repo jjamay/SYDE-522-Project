@@ -32,7 +32,7 @@ class TrainingData:
         #    ('release_date', None),
             # ('runtime', None), # transform finds str? empty space?
             ('spoken_languages', None),
-            # ('keywords', HashingVectorizer(n_features=N)),
+            ('keywords', HashingVectorizer(n_features=N)),
             ('cast_size', None),
             ('crew_size', None),
             ('production_score', None),
