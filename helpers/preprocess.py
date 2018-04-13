@@ -3,26 +3,28 @@ import numpy as np
 import string
 import pandas as pd
 
+pd.options.mode.chained_assignment = None  # default='warn'
+
 CREW_ATTRIBUTES = ['cast', 'director', 'production_companies', 'producers', 'executive_producers']
 
 
-def is_all_ascii(chars):
-    if type(chars) == type([]):
-        chars = list_of_str_to_str(chars)
+# def is_all_ascii(chars):
+#     if type(chars) == type([]):
+#         chars = list_of_str_to_str(chars)
 
-    if pd.isnull(chars):
-        return True
+#     if pd.isnull(chars):
+#         return True
 
-    printable = set(string.printable)
-    for char in chars:
-        if char not in printable:
-            return False
+#     printable = set(string.printable)
+#     for char in chars:
+#         if char not in printable:
+#             return False
 
-    return True
+#     return True
 
 
-def list_of_str_to_str(list_of_str):
-    return " ".join(list_of_str) if type(list_of_str) == list else list_of_str
+# def list_of_str_to_str(list_of_str):
+#     return " ".join(list_of_str) if type(list_of_str) == list else list_of_str
 
 
 def get_role_list(people, role):
@@ -36,9 +38,9 @@ def get_role_list(people, role):
     return crew if len(crew) else []
 
 
-def remove_rows_without_revenue_cost(df):
-    # returns a pandas dataframe
-    return df[np.isfinite(df['revenue_divide_budget'])]
+# def remove_rows_without_revenue_cost(df):
+#     # returns a pandas dataframe
+#     return df[np.isfinite(df['revenue_divide_budget'])]
 
 
 # def remove_rows_with_non_english_movies(df):
@@ -48,7 +50,7 @@ def remove_rows_without_revenue_cost(df):
 #     return df
 
 def bin_ratings(df):
-    df['rating'] = df['vote_average'].apply(lambda x: round(x * 0.4))
+    df['rating'] = df['vote_average'].apply(lambda x: int(round(x * 0.4)))
     return df
 
 
@@ -59,6 +61,14 @@ def binarize_english(df):
 
 def binarize_homepage(df):
     df['homepage'] = df['homepage'].apply(lambda x: 0 if x == np.nan else 1)
+    return df
+
+
+def 
+
+
+def binarize_belongs_to_collection(df):
+    df['belongs_to_collection'] = df['belongs_to_collection'].apply(lambda x: 0 if x == np.nan else 1)
     return df
 
 
@@ -102,26 +112,26 @@ def binarize_genres(df):
     return df
 
 
-def remove_rows_with_non_ascii(df):
-    text_cols = [
-        # 'genres',
-        'overview',
-        'production_companies',
-        'production_countries',
-        'tagline',
-        'title',
-        'cast',
-        'keywords',
-        'director',
-        'producers',
-        'executive_producers',
-        'belongs_to_collection'
-    ]
+# def remove_rows_with_non_ascii(df):
+#     text_cols = [
+#         # 'genres',
+#         'overview',
+#         'production_companies',
+#         'production_countries',
+#         'tagline',
+#         'title',
+#         'cast',
+#         'keywords',
+#         'director',
+#         'producers',
+#         'executive_producers',
+#         'belongs_to_collection'
+#     ]
 
-    for col in text_cols:
-        df = df[df[col].apply(is_all_ascii)]
+#     for col in text_cols:
+#         df = df[df[col].apply(is_all_ascii)]
 
-    return df
+#     return df
 
 
 def generate_name_key(str):
@@ -222,9 +232,35 @@ def get_movie_scores(df):
     return df
 
 
+def drop_unnecessary_columns(df):
+    df = df.drop([
+        'id',
+        'imdb_id',
+        'poster_path',
+        'video',
+        'status',
+        'weighted_rating',
+        'original_title',
+        'crew',
+        'revenue_divide_budget',
+        'producers',
+        'executive_producers',
+        'cast',
+        'director',
+        'production_companies',
+        'genres',
+        'original_language',
+        'revenue',
+        'vote_count',
+        'adult',
+        'release_date'  # ADD BACK IN WHEN READY
+    ], 1)
+    return df
+
+
 def preprocess_data(df):
     # note that order matters!
-    df = remove_rows_without_revenue_cost(df)
+    # df = remove_rows_without_revenue_cost(df)
     # df = remove_rows_with_non_english_movies(df)
     df = binarize_homepage(df)
     df = add_producers_feature(df)
@@ -234,4 +270,6 @@ def preprocess_data(df):
     df = binarize_english(df)
     df = bin_ratings(df)
     df = binarize_genres(df)
+    df = binarize_belongs_to_collection(df)
+    df = drop_unnecessary columns(df)
     return df
