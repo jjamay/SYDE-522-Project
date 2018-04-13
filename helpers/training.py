@@ -47,6 +47,7 @@ class TrainingData:
             ('is_action', None),
             ('is_romance', None),
             ('is_adventure', None),
+            ('is_crime', None),
             ('is_science_fiction', None),
             ('is_horror', None),
             ('is_family', None),
