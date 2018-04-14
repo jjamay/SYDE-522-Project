@@ -13,7 +13,8 @@ def test_svm(x_tr, x_ts, y_tr, y_ts):
 
     def svc_param_selection(X, y, jobs):
         params = {'C': stats.uniform(0, 10),
-              'gamma': stats.uniform(0, 1)}
+                  'gamma': stats.uniform(0, 1)}
+
         rand_search = RandomizedSearchCV(SVC(),
                                          param_distributions=params,
                                          n_jobs=jobs,
@@ -22,9 +23,11 @@ def test_svm(x_tr, x_ts, y_tr, y_ts):
         print(rand_search.best_params_)
         return rand_search.best_params_
 
-    best_params = svc_param_selection(x_tr, y_tr, -1)
+    # best_params = svc_param_selection(x_tr, y_tr, 4)
 
-    svc = SVC(C=best_params['C'], gamma=best_params['gamma'])
+    best_params = {'C': 4.479, 'gamma': 0.1205}
+
+    svc = SVC(kernel='linear', C=best_params['C'], gamma=best_params['gamma'])
     svc.fit(x_tr, y_tr)
 
     p = svc.predict(x_ts)
@@ -37,4 +40,6 @@ def test_svm(x_tr, x_ts, y_tr, y_ts):
 movies_md = r'../../dataset/movies_tmdbMeta.csv'
 og_movies_md_df = pd.read_csv(movies_md)
 best = optimize_for_clf(og_movies_md_df, test_svm)
+
 print('Best performance with rfc: {0}'.format(best))
+

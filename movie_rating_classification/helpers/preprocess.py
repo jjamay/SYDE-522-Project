@@ -82,12 +82,12 @@ def bin_ratings(df):
 
     def bin(val):
         if val < 2.5:
-            return 1
+            return 'terrible'
         if val < 5:
-            return 2
+            return 'poor'
         if val < 7.5:
-            return 3
-        return 4
+            return 'average'
+        return 'excellent'
 
     df['rating'] = df['vote_average'].apply(bin)
     return df
@@ -334,7 +334,7 @@ def drop_unnecessary_columns(df):
         'title',
         'tagline',
         'vote_average',
-        'revenue_divide_budget'
+        'budget'
     ], 1)
     return df
 

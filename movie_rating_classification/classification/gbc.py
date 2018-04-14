@@ -20,4 +20,6 @@ def test_gbc(x_tr, x_ts, y_tr, y_ts):
 movies_md = r'../../dataset/movies_tmdbMeta.csv'
 og_movies_md_df = pd.read_csv(movies_md)
 best = optimize_for_clf(og_movies_md_df, test_gbc)
+
 print('Best performance with gbc: {0}'.format(best))
+
