@@ -194,9 +194,8 @@ def get_literal_eval(data):
     return data
 
 
-def get_avg_scores_for_attribute(df, attribute):
+def get_avg_scores_for_attribute(df, attribute, min_vote_count):
     ratings = {}
-    min_vote_count = 1000
 
     movies = df[df['vote_count'] > min_vote_count]
 
@@ -259,11 +258,11 @@ def calculate_final_production_score(row, ratings):
     return final_score
 
 
-def get_movie_scores(df):
+def get_movie_scores(df, min_vote_count=1000):
     ratings = {}
 
     for x in CREW_ATTRIBUTES:
-        ratings[x] = get_avg_scores_for_attribute(df, x)
+        ratings[x] = get_avg_scores_for_attribute(df, x, min_vote_count)
 
     df['production_score'] = df.apply(calculate_final_production_score, ratings=ratings, axis=1)
     return df
@@ -296,8 +295,16 @@ def convert_keywords_to_string(df):
     return df
 
 
-def fill_empty_values(df):
-    df = df.fillna(df.mean())
+def fill_empty_values(df, attribute, method='mean'):
+    temp_df = df[df[attribute].notnull()]
+
+    if method == 'mode':
+        df[attribute].fillna(temp_df[attribute].mode()[0], inplace=True)
+    elif method == 'median':
+        df[attribute].fillna(temp_df[attribute].median(), inplace=True)
+    else:
+        df[attribute].fillna(temp_df[attribute].mean(), inplace=True)
+
     return df
 
 
@@ -332,7 +339,7 @@ def drop_unnecessary_columns(df):
     return df
 
 
-def preprocess_data(df):
+def preprocess_data(df, min_vote_count=1000, backfill_method='mean'):
     # note that order matters!
     # df = remove_rows_without_revenue_cost(df)
     # df = remove_rows_with_non_english_movies(df)
@@ -341,7 +348,7 @@ def preprocess_data(df):
     df = add_producers_feature(df)
     df = add_executive_producers_feature(df)
     # df = remove_rows_with_non_ascii(df)
-    df = get_movie_scores(df)
+    df = get_movie_scores(df, min_vote_count)
     df = binarize_english(df)
     df = bin_ratings(df)
     df = binarize_genres(df)
@@ -349,5 +356,6 @@ def preprocess_data(df):
     df = binarize_production_countries(df)
     df = convert_keywords_to_string(df)
     df = drop_unnecessary_columns(df)
-    df = fill_empty_values(df)
+    df = fill_empty_values(df, 'budget', backfill_method)
+    df = fill_empty_values(df, 'runtime', backfill_method)
     return df

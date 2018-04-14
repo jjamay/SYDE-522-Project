@@ -1,8 +1,6 @@
 from pandas import DataFrame, read_csv
 from sklearn.model_selection import train_test_split
 from sklearn_pandas import DataFrameMapper
-from sklearn.feature_extraction.text import HashingVectorizer
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import Normalizer
 from sklearn.preprocessing import MinMaxScaler
@@ -19,20 +17,24 @@ TRAIN_SIZE = 0.8
 
 class TrainingData:
 
-    def __init__(self):
-        self.X = pd.read_csv(X_FILE)
+    def __init__(
+        self,
+        X_df=None,
+        Y_df=None,
+    ):
+        self.X = pd.read_csv(X_FILE) if X_df is None else X_df
         self.X.fillna('', inplace=True) # can't have nan in any of the columns
-        self.Y = pd.read_csv(Y_FILE)
-        self.Y = np.reshape(self.Y.values, [self.Y.shape[0],])
+        self.Y = pd.read_csv(Y_FILE) if Y_df is None else Y_df
+
+        if Y_df is None:
+            self.Y = np.reshape(self.Y.values, [self.Y.shape[0],])
+        
         self.features = self.generate_features(self.X)
         self.X_tr, self.X_ts, self.Y_tr, self.Y_ts = train_test_split(self.features, self.Y, train_size=TRAIN_SIZE)
-#         scaler = StandardScaler()
-#         self.X_tr = scaler.fit_transform(self.X_tr)
-#         self.X_ts = scaler.transform(self.X_ts)
         label_enc = LabelEncoder()
         self.Y_tr = label_enc.fit_transform(self.Y_tr);
         self.Y_ts = label_enc.transform(self.Y_ts);
-
+        
     def generate_features(self, data):
         mapper = DataFrameMapper([
             ('belongs_to_collection', None),
@@ -71,6 +73,7 @@ class TrainingData:
             ('prod_usa', None),
             ('prod_france', None),
             ('prod_other', None)
-        ])
+        ], input_df=True)
+
 
         return mapper.fit_transform(data)
