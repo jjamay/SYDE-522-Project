@@ -10,20 +10,27 @@ import numpy as np
 X_FILE = r'dataset/X.csv'
 Y_FILE = r'dataset/Y.csv'
 
-N = 20
 TRAIN_SIZE = 0.8
 
 class TrainingData:
 
-    def __init__(self):
-        self.X = pd.read_csv(X_FILE)
+    def __init__(
+        self,
+        X_df=None,
+        Y_df=None,
+        num_vectorizer_features=20,
+    ):
+        self.X = pd.read_csv(X_FILE) if X_df is None else X_df
         self.X.fillna('', inplace=True) # can't have nan in any of the columns
-        self.Y = pd.read_csv(Y_FILE)
-        self.Y = np.reshape(self.Y.values, [self.Y.shape[0],])
-        self.features = self.generate_features(self.X)
+        self.Y = pd.read_csv(Y_FILE) if Y_df is None else Y_df
+
+        if Y_df is None:
+            self.Y = np.reshape(self.Y.values, [self.Y.shape[0],])
+        
+        self.features = self.generate_features(self.X, num_vectorizer_features)
         self.X_tr, self.X_ts, self.Y_tr, self.Y_ts = train_test_split(self.features, self.Y, train_size=TRAIN_SIZE)
 
-    def generate_features(self, data):
+    def generate_features(self, data, num_vectorizer_features=20):
         mapper = DataFrameMapper([
             ('belongs_to_collection', None),
             ('budget', None),
@@ -31,7 +38,7 @@ class TrainingData:
             ('popularity', None),
             ('runtime', None),
             ('spoken_languages', None),
-            ('keywords', HashingVectorizer(n_features=N)),
+            # ('keywords', HashingVectorizer(n_features=num_vectorizer_features)),
             ('cast_size', None),
             ('crew_size', None),
             ('production_score', None),
