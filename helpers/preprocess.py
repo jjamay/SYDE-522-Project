@@ -297,7 +297,6 @@ def convert_keywords_to_string(df):
 
 def fill_empty_values(df, attribute, method='mean'):
     temp_df = df[df[attribute].notnull()]
-    # temp_df = temp_df[df['runtime'].notnull()]
 
     if method == 'mode':
         df[attribute].fillna(temp_df[attribute].mode()[0], inplace=True)
