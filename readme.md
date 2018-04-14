@@ -6,3 +6,23 @@
 4) Add SYDE-522-Project/ directory to your $PYTHONPATH
 5) Make sure you are running Python 2.7
 Justin
+
+
+### How To Run
+
+1) Locate run.py under movie_rating_classifiation
+2) Run using python run.py
+
+Options:
+
+-c <classifier>
+One of "svm", "rfc", "gbc"
+
+-p
+To run data preprocessing before classifying
+
+-o
+To run optimization instead of just classifying
+
+-h
+Help

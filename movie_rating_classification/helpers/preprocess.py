@@ -82,12 +82,12 @@ def bin_ratings(df):
 
     def bin(val):
         if val < 2.5:
-            return 1
+            return 'terrible'
         if val < 5:
-            return 2
+            return 'poor'
         if val < 7.5:
-            return 3
-        return 4
+            return 'average'
+        return 'excellent'
 
     df['rating'] = df['vote_average'].apply(bin)
     return df
@@ -334,7 +334,7 @@ def drop_unnecessary_columns(df):
         'title',
         'tagline',
         'vote_average',
-        'revenue_divide_budget'
+        'budget'
     ], 1)
     return df
 
@@ -356,6 +356,13 @@ def preprocess_data(df, min_vote_count=1000, backfill_method='mean'):
     df = binarize_production_countries(df)
     df = convert_keywords_to_string(df)
     df = drop_unnecessary_columns(df)
-    df = fill_empty_values(df, 'budget', backfill_method)
+    # df = fill_empty_values(df, 'budget', backfill_method)
     df = fill_empty_values(df, 'runtime', backfill_method)
-    return df
+    df = fill_empty_values(df, 'revenue_divide_budget', backfill_method)
+
+    # Export to CSV
+    y = df[['rating']]
+    y.to_csv(r'../dataset/Y.csv', index=False)
+    df = df.drop(['rating'], 1)
+
+    df.to_csv(r'../dataset/X.csv', index=True, index_label='Id')
