@@ -10,7 +10,7 @@ import numpy as np
 X_FILE = r'dataset/X.csv'
 Y_FILE = r'dataset/Y.csv'
 
-N = 25
+N = 20
 TRAIN_SIZE = 0.8
 
 class TrainingData:
@@ -29,17 +29,13 @@ class TrainingData:
             ('budget', None),
             ('homepage', None),
             ('popularity', None),
-            ('prod_usa', None),
-            ('prod_uk', None),
-            ('prod_france', None),
-            ('prod_other', None),
-        #    ('release_date', None),
             ('runtime', None),
             ('spoken_languages', None),
-            ('keywords', TfidfVectorizer()),
+            ('keywords', HashingVectorizer(n_features=N)),
             ('cast_size', None),
             ('crew_size', None),
             ('production_score', None),
+        #    ('release_date', None),
             ('is_english', None),
             ('is_drama', None),
             ('is_comedy', None),
@@ -60,6 +56,11 @@ class TrainingData:
             ('is_western', None),
             ('is_documentary', None),
             ('is_foreign', None),
+            ('is_tv_movie', None),
+            ('prod_uk', None),
+            ('prod_usa', None),
+            ('prod_france', None),
+            ('prod_other', None)
         ], input_df=True)
 
         return mapper.fit_transform(data)
