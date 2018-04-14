@@ -66,8 +66,30 @@ def get_role_list(people, role):
 #     df = df.drop(['original_language'], 1)
 #     return df
 
+
+def random_sample_class_3(df):
+    N = 200
+    for i in np.arange(5.0, 7.5, 0.1):
+        rows = df[df.vote_average == round(i, 1)]
+        rows = rows.sample(n=N)
+        df = df[df.vote_average != round(i, 1)]
+        df = df.append(rows, ignore_index=True)
+
+    return df
+
+
 def bin_ratings(df):
-    df['rating'] = df['vote_average'].apply(lambda x: int(round(x * 0.4)))
+
+    def bin(val):
+        if val < 2.5:
+            return 1
+        if val < 5:
+            return 2
+        if val < 7.5:
+            return 3
+        return 4
+
+    df['rating'] = df['vote_average'].apply(bin)
     return df
 
 
@@ -77,12 +99,12 @@ def binarize_english(df):
 
 
 def binarize_homepage(df):
-    df['homepage'] = df['homepage'].apply(lambda x: 0 if x == np.nan else 1)
+    df['homepage'] = df['homepage'].apply(lambda x: 0 if pd.isnull(x) else 1)
     return df
 
 
 def binarize_belongs_to_collection(df):
-    df['belongs_to_collection'] = df['belongs_to_collection'].apply(lambda x: 0 if x == np.nan else 1)
+    df['belongs_to_collection'] = df['belongs_to_collection'].apply(lambda x: 0 if pd.isnull(x) else 1)
     return df
 
 
@@ -97,7 +119,7 @@ def add_executive_producers_feature(df):
 
 
 def binarize_genres(df):
-    df['genres'] = df['genres'].apply(lambda x: ast.literal_eval(x) if x != np.nan else [])
+    df['genres'] = df['genres'].apply(lambda x: [] if pd.isnull(x) else ast.literal_eval(x))
 
     genres = [
         'Drama',
@@ -298,7 +320,7 @@ def drop_unnecessary_columns(df):
         'original_language',
         'revenue',
         'vote_count',
-        'adult',
+        'adult',  # No adult movies
         'release_date',  # ADD BACK IN WHEN READY
         'overview',
         'title',
@@ -313,6 +335,7 @@ def preprocess_data(df, min_vote_count=1000):
     # note that order matters!
     # df = remove_rows_without_revenue_cost(df)
     # df = remove_rows_with_non_english_movies(df)
+    df = random_sample_class_3(df)
     df = binarize_homepage(df)
     df = add_producers_feature(df)
     df = add_executive_producers_feature(df)
