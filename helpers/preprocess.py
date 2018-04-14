@@ -258,7 +258,7 @@ def calculate_final_production_score(row, ratings):
     return final_score
 
 
-def get_movie_scores(df, min_vote_count):
+def get_movie_scores(df, min_vote_count=1000):
     ratings = {}
 
     for x in CREW_ATTRIBUTES:
@@ -295,8 +295,17 @@ def convert_keywords_to_string(df):
     return df
 
 
-def fill_empty_values(df):
-    df = df.fillna(df.mean())
+def fill_empty_values(df, attribute, method='mean'):
+    temp_df = df[df[attribute].notnull()]
+    # temp_df = temp_df[df['runtime'].notnull()]
+
+    if method == 'mode':
+        df[attribute].fillna(temp_df[attribute].mode()[0], inplace=True)
+    elif method == 'median':
+        df[attribute].fillna(temp_df[attribute].median())
+    else:
+        df[attribute].fillna(temp_df[attribute].mean())
+
     return df
 
 
@@ -331,7 +340,7 @@ def drop_unnecessary_columns(df):
     return df
 
 
-def preprocess_data(df, min_vote_count=1000):
+def preprocess_data(df, min_vote_count=1000, backfill_method='mean'):
     # note that order matters!
     # df = remove_rows_without_revenue_cost(df)
     # df = remove_rows_with_non_english_movies(df)
@@ -348,5 +357,6 @@ def preprocess_data(df, min_vote_count=1000):
     df = binarize_production_countries(df)
     df = convert_keywords_to_string(df)
     df = drop_unnecessary_columns(df)
-    df = fill_empty_values(df)
+    df = fill_empty_values(df, 'budget', backfill_method)
+    df = fill_empty_values(df, 'runtime', backfill_method)
     return df
