@@ -1,10 +1,11 @@
 from movie_rating_classification.helpers.preprocess import preprocess_data
 from movie_rating_classification.helpers.training import TrainingData
+from movie_rating_classification.helpers.data import get_data
 
 import time
 
 
-def optimize_for_clf(og_df, method, preprocess):
+def optimize_for_clf(og_df, method):
     min_vote_count_range = [100, 500, 1000, 5000]
     backfill_method_options = ['mean', 'median', 'mode']
 
@@ -14,13 +15,12 @@ def optimize_for_clf(og_df, method, preprocess):
 
     for min_vote_count in min_vote_count_range:
         for backfill_method in backfill_method_options:
-            if preprocess:
-                preprocess_data(
-                    og_df,
-                    min_vote_count,
-                    backfill_method
-                )
-                time.sleep(5)
+            preprocess_data(
+                get_data(),
+                min_vote_count,
+                backfill_method
+            )
+            time.sleep(5)
 
             training_data = TrainingData()
 

@@ -1,5 +1,6 @@
 from movie_rating_classification.helpers.preprocess import preprocess_data
 from movie_rating_classification.helpers.training import TrainingData
+from movie_rating_classification.helpers.data import get_data
 
 import time
 
@@ -10,7 +11,7 @@ BACKFILL_METHOD = 'median'
 def classify(og_df, method, preprocess):
     if preprocess:
         preprocess_data(
-            og_df,
+            get_data(),
             MIN_VOTE_COUNT,
             BACKFILL_METHOD
         )

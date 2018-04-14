@@ -6,9 +6,6 @@ from movie_rating_classification.helpers.classify import classify
 
 import sys
 import getopt
-import pandas as pd
-
-MOVIES_MD = r'../dataset/movies_tmdbMeta.csv'
 
 
 def run(classifier, preprocess, optimize):
@@ -21,12 +18,12 @@ def run(classifier, preprocess, optimize):
     else:
         print 'Error: Invalid classifier specified'
         sys.exit(2)
-    og_df = pd.read_csv(MOVIES_MD)
+
     if optimize:
-        best = optimize_for_clf(og_df, method, preprocess)
+        best = optimize_for_clf(method)
         print('Best performance with {0}: {1}'.format(classifier, best))
     else:
-        accuracy = classify(og_df, method, preprocess)
+        accuracy = classify(method, preprocess)
         print('Accuracy with {0}: {1}'.format(classifier, accuracy))
 
 
