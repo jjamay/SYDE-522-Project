@@ -99,12 +99,12 @@ def binarize_english(df):
 
 
 def binarize_homepage(df):
-    df['homepage'] = df['homepage'].apply(lambda x: 0 if x == np.nan else 1)
+    df['homepage'] = df['homepage'].apply(lambda x: 0 if pd.isnull(x) else 1)
     return df
 
 
 def binarize_belongs_to_collection(df):
-    df['belongs_to_collection'] = df['belongs_to_collection'].apply(lambda x: 0 if x == np.nan else 1)
+    df['belongs_to_collection'] = df['belongs_to_collection'].apply(lambda x: 0 if pd.isnull(x) else 1)
     return df
 
 
@@ -119,7 +119,7 @@ def add_executive_producers_feature(df):
 
 
 def binarize_genres(df):
-    df['genres'] = df['genres'].apply(lambda x: ast.literal_eval(x) if x != np.nan else [])
+    df['genres'] = df['genres'].apply(lambda x: [] if pd.isnull(x) else ast.literal_eval(x))
 
     genres = [
         'Drama',
@@ -321,7 +321,7 @@ def drop_unnecessary_columns(df):
         'original_language',
         'revenue',
         'vote_count',
-        'adult',
+        'adult',  # No adult movies
         'release_date',  # ADD BACK IN WHEN READY
         'overview',
         'title',
