@@ -6,7 +6,7 @@ import time
 
 
 def optimize_for_clf(og_df, method):
-    min_vote_count_range = [100, 500, 1000, 5000]
+    min_vote_count_range = [0, 50, 100, 500]
     backfill_method_options = ['mean', 'median', 'mode']
 
     best = {
