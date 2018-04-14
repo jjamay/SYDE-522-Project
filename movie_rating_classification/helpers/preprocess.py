@@ -327,7 +327,7 @@ def drop_unnecessary_columns(df):
         'genres',
         # 'original_language', # already dropped 
         'revenue',
-        'vote_count',
+        # 'vote_count',
         'adult',  # No adult movies
         'release_date',  # ADD BACK IN WHEN READY
         'overview',

@@ -66,7 +66,8 @@ class TrainingData:
             ('prod_uk', None),
             ('prod_usa', None),
             ('prod_france', None),
-            ('prod_other', None)
+            ('prod_other', None),
+            ('vote_count', None)
         ], input_df=True)
 
         return mapper.fit_transform(data)

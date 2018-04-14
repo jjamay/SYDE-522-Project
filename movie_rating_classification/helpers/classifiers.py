@@ -12,9 +12,6 @@ import pandas as pd
 
 
 def test_mlp(x_tr, x_ts, y_tr, y_ts):
-    y_tr = y_tr.values.ravel()
-    y_ts = y_ts.values.ravel()
-
     num_neurons = x_tr.shape[1]
     num_iterations = 500
 
