@@ -8,9 +8,9 @@ import pandas as pd
 def test_rfc(x_tr, x_ts, y_tr, y_ts):
     y_tr = y_tr.values.ravel()
     y_ts = y_ts.values.ravel()
-    
-    num_neurons = 10#x_tr.shape[1]
-    num_iterations = 5000
+
+    num_neurons = x_tr.shape[1]
+    num_iterations = 500
 
     clf = MLPClassifier(hidden_layer_sizes=(num_neurons, num_neurons, num_neurons), max_iter=num_iterations)
     clf.fit(x_tr, y_tr)
