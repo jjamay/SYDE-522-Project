@@ -301,9 +301,9 @@ def fill_empty_values(df, attribute, method='mean'):
     if method == 'mode':
         df[attribute].fillna(temp_df[attribute].mode()[0], inplace=True)
     elif method == 'median':
-        df[attribute].fillna(temp_df[attribute].median())
+        df[attribute].fillna(temp_df[attribute].median(), inplace=True)
     else:
-        df[attribute].fillna(temp_df[attribute].mean())
+        df[attribute].fillna(temp_df[attribute].mean(), inplace=True)
 
     return df
 
