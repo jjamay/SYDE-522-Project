@@ -34,7 +34,7 @@ def test_svm(x_tr, x_ts, y_tr, y_ts):
     return accuracy
 
 
-movies_md = r'dataset/movies_tmdbMeta.csv'
+movies_md = r'../../dataset/movies_tmdbMeta.csv'
 og_movies_md_df = pd.read_csv(movies_md)
 best = optimize_for_clf(og_movies_md_df, test_svm)
 print('Best performance with rfc: {0}'.format(best))
