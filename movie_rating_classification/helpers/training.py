@@ -38,7 +38,7 @@ class TrainingData:
             ('popularity', None),
             ('runtime', None),
             ('spoken_languages', None),
-            # ('keywords', HashingVectorizer(n_features=num_vectorizer_features)),
+            ('keywords', HashingVectorizer(n_features=num_vectorizer_features)),
             ('cast_size', None),
             ('crew_size', None),
             ('production_score', None),
