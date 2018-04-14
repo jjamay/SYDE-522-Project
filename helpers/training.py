@@ -3,6 +3,8 @@ from sklearn.model_selection import train_test_split
 from sklearn_pandas import DataFrameMapper
 from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import Normalizer
 import pandas as pd 
 import numpy as np
 
@@ -22,6 +24,9 @@ class TrainingData:
         self.Y = np.reshape(self.Y.values, [self.Y.shape[0],])
         self.features = self.generate_features(self.X)
         self.X_tr, self.X_ts, self.Y_tr, self.Y_ts = train_test_split(self.features, self.Y, train_size=TRAIN_SIZE)
+        scaler = StandardScaler()
+        self.X_tr = scaler.fit_transform(self.X_tr)
+        self.X_ts = scaler.transform(self.X_ts)
 
     def generate_features(self, data):
         mapper = DataFrameMapper([
@@ -31,7 +36,7 @@ class TrainingData:
             ('popularity', None),
             ('runtime', None),
             ('spoken_languages', None),
-            ('keywords', HashingVectorizer(n_features=N)),
+            ('keywords', [HashingVectorizer(n_features=N), Normalizer()]),
             ('cast_size', None),
             ('crew_size', None),
             ('production_score', None),
