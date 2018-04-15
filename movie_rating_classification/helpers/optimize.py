@@ -5,7 +5,7 @@ from movie_rating_classification.helpers.data import get_data
 import time
 
 
-def optimize_for_clf(og_df, method, tune):
+def optimize_for_clf(method, tune):
     min_vote_count_range = [0, 50, 100, 500]
     backfill_method_options = ['mean', 'median', 'mode']
 

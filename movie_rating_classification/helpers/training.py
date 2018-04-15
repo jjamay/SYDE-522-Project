@@ -2,6 +2,7 @@ from sklearn.model_selection import train_test_split
 from sklearn_pandas import DataFrameMapper
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import PCA
 
 import pandas as pd
 import numpy as np
@@ -22,6 +23,10 @@ class TrainingData:
         self.Y = np.reshape(self.Y.values, [self.Y.shape[0], ])
 
         self.X = self.generate_features(self.X)
+
+        # pca = PCA(n_components=35)
+        # self.X = pca.fit_transform(self.X)
+
         # self.X_tr, self.X_ts, self.Y_tr, self.Y_ts = train_test_split(self.features, self.Y, train_size=TRAIN_SIZE)
 
         # scaler = StandardScaler()
