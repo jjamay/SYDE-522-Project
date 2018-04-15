@@ -26,7 +26,7 @@ class TrainingData:
         self.features = self.generate_features(self.X)
         self.X_tr, self.X_ts, self.Y_tr, self.Y_ts = train_test_split(self.features, self.Y, train_size=TRAIN_SIZE)
 
-        scaler = StandardScaler()
+        scaler = MinMaxScaler()
         self.X_tr = scaler.fit_transform(self.X_tr)
         self.X_ts = scaler.transform(self.X_ts)
 

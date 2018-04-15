@@ -51,9 +51,9 @@ def test_svm(x_tr, x_ts, y_tr, y_ts, tune):
 
         best_params = svc_param_selection(x_tr, y_tr, 4)
 
-        svc = SVC(kernel='linear', C=best_params['C'], gamma=best_params['gamma'])
+        svc = SVC(kernel='rbf', C=best_params['C'], gamma=best_params['gamma'])
     else:
-        svc = SVC(kernel='linear', C=C, gamma=GAMMA)
+        svc = SVC(kernel='rbf', C=C, gamma=GAMMA)
 
     svc.fit(x_tr, y_tr)
 

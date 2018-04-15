@@ -42,16 +42,16 @@ def main(argv):
     tune = False
 
     try:
-        opts, args = getopt.getopt(argv, "hpoc:")
+        opts, args = getopt.getopt(argv, "hpotc:")
     except getopt.GetoptError:
-        print 'run.py -c <classifier> -p -o'
+        print 'run.py <classifier> -p -o -t'
         sys.exit(2)
+
+    classifier = args[0]
     for opt, arg in opts:
         if opt == '-h':
-            print 'run.py -c <classifier> -p -o'
+            print 'run.py <classifier> -p -o -t'
             sys.exit()
-        if opt == '-c':
-            classifier = arg
         if opt == '-p':
             preprocess = True
         if opt == '-o':
