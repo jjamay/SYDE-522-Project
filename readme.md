@@ -5,13 +5,14 @@
 3)  Run data_prep.ipynb to generate our version of the dataset
 4) Add SYDE-522-Project/ directory to your $PYTHONPATH
 5) Make sure you are running Python 2.7
+
 Justin
 
 
 ### How To Run
 
 1) Locate run.py under movie_rating_classifiation
-2) Run using: python run.py `<classifier>` (svm, rfc, gbc, mlp, lr)
+2) Run using: python run.py `<classifier>` (svm, rfc, gbc, mlp, lr, mnb)
 
 Options:
 
@@ -26,3 +27,5 @@ To tune classifier parameters
 
 -h
 Help
+
+Jordan

@@ -3,7 +3,9 @@ from movie_rating_classification.helpers.classifiers import (
     test_rfc,
     test_gbc,
     test_svm,
-    test_logistic_regression
+    test_logistic_regression,
+    test_nb,
+    test_mnb
 )
 from movie_rating_classification.helpers.optimize import optimize_for_clf
 from movie_rating_classification.helpers.classify import classify
@@ -23,6 +25,10 @@ def run(classifier, preprocess, optimize, tune):
         method = test_mlp
     elif classifier == 'lr':
         method = test_logistic_regression
+    elif classifier == 'nb':
+        method = test_nb
+    elif classifier == 'mnb':
+        method = test_mnb
     else:
         print('Error: Invalid classifier specified')
         sys.exit(2)

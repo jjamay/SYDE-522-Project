@@ -5,7 +5,7 @@ from movie_rating_classification.helpers.data import get_data
 import time
 
 MIN_VOTE_COUNT = 0
-BACKFILL_METHOD = 'mode'
+BACKFILL_METHOD = 'mean'
 
 
 def classify(method, preprocess, tune):

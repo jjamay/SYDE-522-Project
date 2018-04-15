@@ -11,8 +11,6 @@ import numpy as np
 X_FILE = r'../dataset/X.csv'
 Y_FILE = r'../dataset/Y.csv'
 
-TRAIN_SIZE = 0.7
-
 
 class TrainingData:
 
@@ -26,12 +24,6 @@ class TrainingData:
 
         # pca = PCA(n_components=35)
         # self.X = pca.fit_transform(self.X)
-
-        # self.X_tr, self.X_ts, self.Y_tr, self.Y_ts = train_test_split(self.features, self.Y, train_size=TRAIN_SIZE)
-
-        # scaler = StandardScaler()
-        # self.X_tr = scaler.fit_transform(self.X_tr)
-        # self.X_ts = scaler.transform(self.X_ts)
 
         label_enc = LabelEncoder()
         self.Y = label_enc.fit_transform(self.Y)
