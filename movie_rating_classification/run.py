@@ -24,7 +24,7 @@ def run(classifier, preprocess, optimize, tune):
     elif classifier == 'lr':
         method = test_logistic_regression
     else:
-        print 'Error: Invalid classifier specified'
+        print('Error: Invalid classifier specified')
         sys.exit(2)
 
     if optimize:
@@ -47,7 +47,7 @@ def main(argv):
 
     for opt, arg in opts:
         if opt == '-h':
-            print 'run.py <classifier> -p -o -t'
+            print('run.py <classifier> -p -o -t')
             sys.exit()
         if opt == '-p':
             preprocess = True

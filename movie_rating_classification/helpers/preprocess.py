@@ -60,11 +60,11 @@ def remove_rows_without_revenue_cost(df):
     return df[np.isfinite(df['revenue_divide_budget'])]
 
 
-def remove_rows_with_non_english_movies(df):
-    # returns a pandas dataframe
-    df = df[df['original_language'] == 'en']
-    df = df.drop(['original_language'], 1)
-    return df
+# def remove_rows_with_non_english_movies(df):
+#     # returns a pandas dataframe
+#     df = df[df['original_language'] == 'en']
+#     df = df.drop(['original_language'], 1)
+#     return df
 
 
 def random_sample_average_class(df):
@@ -353,7 +353,7 @@ def preprocess_data(df, min_vote_count=1000, backfill_method='mean'):
     df = add_executive_producers_feature(df)
     # df = remove_rows_with_non_ascii(df)
     df = get_movie_scores(df, min_vote_count)
-    # df = binarize_english(df)
+    df = binarize_english(df)
     df = bin_ratings(df)
     df = binarize_genres(df)
     df = binarize_belongs_to_collection(df)
