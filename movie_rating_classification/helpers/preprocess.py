@@ -55,9 +55,9 @@ def get_role_list(people, role):
     return crew if len(crew) else []
 
 
-# def remove_rows_without_revenue_cost(df):
-#     # returns a pandas dataframe
-#     return df[np.isfinite(df['revenue_divide_budget'])]
+def remove_rows_without_revenue_cost(df):
+    # returns a pandas dataframe
+    return df[np.isfinite(df['revenue_divide_budget'])]
 
 
 def remove_rows_with_non_english_movies(df):
@@ -67,7 +67,11 @@ def remove_rows_with_non_english_movies(df):
     return df
 
 
-def random_sample_class_3(df):
+def random_sample_average_class(df):
+    """ Since the 'average' class dominates, randomly sample
+    200 movies from each decimal rating in this class to
+    balance data """
+
     N = 200
     for i in np.arange(5.0, 7.5, 0.1):
         rows = df[df.vote_average == round(i, 1)]
@@ -341,9 +345,9 @@ def drop_unnecessary_columns(df):
 
 def preprocess_data(df, min_vote_count=1000, backfill_method='mean'):
     # note that order matters!
-    # df = remove_rows_without_revenue_cost(df)
-    df = remove_rows_with_non_english_movies(df)
-    df = random_sample_class_3(df)
+    df = remove_rows_without_revenue_cost(df)
+    # df = remove_rows_with_non_english_movies(df)
+    # df = random_sample_average_class(df)
     df = binarize_homepage(df)
     df = add_producers_feature(df)
     df = add_executive_producers_feature(df)
@@ -358,7 +362,7 @@ def preprocess_data(df, min_vote_count=1000, backfill_method='mean'):
     df = drop_unnecessary_columns(df)
     # df = fill_empty_values(df, 'budget', backfill_method)
     df = fill_empty_values(df, 'runtime', backfill_method)
-    df = fill_empty_values(df, 'revenue_divide_budget', backfill_method)
+    # df = fill_empty_values(df, 'revenue_divide_budget', backfill_method)
 
     # Export to CSV
     y = df[['rating']]

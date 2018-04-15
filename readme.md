@@ -11,18 +11,18 @@ Justin
 ### How To Run
 
 1) Locate run.py under movie_rating_classifiation
-2) Run using python run.py
+2) Run using: python run.py <classifier> (svm, rfc, gbc, mlp, lr)
 
 Options:
-
--c <classifier>
-One of "svm", "rfc", "gbc"
 
 -p
 To run data preprocessing before classifying
 
 -o
 To run optimization instead of just classifying
+
+-t
+To tune classifier parameters
 
 -h
 Help

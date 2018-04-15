@@ -10,12 +10,9 @@ from movie_rating_classification.helpers.classify import classify
 
 import sys
 import getopt
-import pandas as pd
-
-MOVIES_MD = r'../dataset/movies_tmdbMeta.csv'
 
 
-def run(classifier, preprocess, optimize):
+def run(classifier, preprocess, optimize, tune):
     if classifier == "svm":
         method = test_svm
     elif classifier == "rfc":
@@ -29,12 +26,12 @@ def run(classifier, preprocess, optimize):
     else:
         print 'Error: Invalid classifier specified'
         sys.exit(2)
-    og_df = pd.read_csv(MOVIES_MD)
+
     if optimize:
-        best = optimize_for_clf(og_df, method, preprocess)
+        best = optimize_for_clf(method, tune)
         print('Best performance with {0}: {1}'.format(classifier, best))
     else:
-        accuracy = classify(og_df, method, preprocess)
+        accuracy = classify(method, preprocess, tune)
         print('Accuracy with {0}: {1}'.format(classifier, accuracy))
 
 
@@ -42,24 +39,27 @@ def main(argv):
     classifier = None
     preprocess = False
     optimize = False
+    tune = False
 
     try:
-        opts, args = getopt.getopt(argv, "hpoc:")
+        opts, args = getopt.getopt(argv, "hpotc:")
     except getopt.GetoptError:
-        print 'run.py -c <classifier> -p -o'
+        print 'run.py <classifier> -p -o -t'
         sys.exit(2)
+
+    classifier = args[0]
     for opt, arg in opts:
         if opt == '-h':
-            print 'run.py -c <classifier> -p -o'
+            print 'run.py <classifier> -p -o -t'
             sys.exit()
-        if opt == '-c':
-            classifier = arg
         if opt == '-p':
             preprocess = True
         if opt == '-o':
             optimize = True
+        if opt == '-t':
+            tune = True
 
-    run(classifier, preprocess, optimize)
+    run(classifier, preprocess, optimize, tune)
 
 
 if __name__ == "__main__":
