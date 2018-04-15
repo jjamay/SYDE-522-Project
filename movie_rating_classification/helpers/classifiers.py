@@ -1,22 +1,47 @@
-from sklearn.metrics import accuracy_score
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import (
     GradientBoostingClassifier,
     RandomForestClassifier)
 from sklearn.svm import SVC
-from sklearn.model_selection import RandomizedSearchCV
+from sklearn.model_selection import (RandomizedSearchCV, cross_val_score)
 from sklearn.linear_model import LogisticRegression
 from scipy import stats
-from sklearn.cross_validation import StratifiedKFold
-from sklearn.model_selection import cross_val_score
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import (StandardScaler, MinMaxScaler)
+from sklearn.pipeline import Pipeline
+from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import MultinomialNB
 
 
-def accuracy(classifier, x, y, cv=5):
-    clf = make_pipeline(MinMaxScaler(), classifier)
+def accuracy(clf, x, y, cv=5):
     return cross_val_score(clf, x, y, cv=cv).mean() * 100
+
+
+def create_pipeline(clf):
+    return Pipeline([('scaler', MinMaxScaler()), ('clf', clf)])
+
+
+def test_nb(x, y, tune):
+    nb = GaussianNB()
+    pipeline = create_pipeline(nb)
+    return accuracy(pipeline, x, y)
+
+
+def test_mnb(x, y, tune):
+    if tune:
+        parameters = {'clf__alpha': stats.uniform(0, 1)}
+        rand_search = RandomizedSearchCV(
+            create_pipeline(MultinomialNB()),
+            param_distributions=parameters,
+            n_jobs=-1,
+            cv=5)
+        rand_search.fit(x, y)
+        best_params = rand_search.best_params_
+        print("best_params: {0}".format(best_params))
+        return rand_search.best_score_ * 100
+    else:
+        mnb = MultinomialNB(alpha=0.19383194558775096)
+        pipeline = create_pipeline(mnb)
+        return accuracy(pipeline, x, y)
 
 
 def test_mlp(x, y, tune):
@@ -25,44 +50,37 @@ def test_mlp(x, y, tune):
 
     if tune:
         parameters = {
-            'hidden_layer_sizes': [(num_neurons, num_neurons, num_neurons), (2*num_neurons, 2*num_neurons, 2*num_neurons)],
-            'activation': ['tanh', 'logistic', 'relu'],
-            'alpha': [0.0001, 0.001, 0.01, 0.1, 1, 10],
-            'max_iter': [200],
-            'learning_rate_init': [0.001, 0.05]
+            'clf__hidden_layer_sizes': [(num_neurons, num_neurons, num_neurons), (2*num_neurons, 2*num_neurons, 2*num_neurons)],
+            'clf__activation': ['tanh', 'logistic', 'relu'],
+            'clf__alpha': [0.0001, 0.001, 0.01, 0.1, 1, 10],
+            'clf__max_iter': [200],
+            'clf__learning_rate_init': [0.001, 0.05]
         }
 
         rand_search = RandomizedSearchCV(
-            estimator=MLPClassifier(),
+            estimator=create_pipeline(MLPClassifier(verbose=10)),
             param_distributions=parameters,
             n_jobs=-1,
-            cv=StratifiedKFold(y=y, n_folds=5)
+            cv=5
         )
 
         rand_search.fit(x, y)
         best_params = rand_search.best_params_
         print("best_params: {0}".format(best_params))
-
-        clf = MLPClassifier(
-            hidden_layer_sizes=best_params['hidden_layer_sizes'],
-            activation=best_params['activation'],
-            max_iter=best_params['max_iter'],
-            alpha=best_params['alpha'],
-            learning_rate_init=best_params['learning_rate_init'],
-            verbose=10,
-        )
+        return rand_search.best_score_ * 100
     else:
         clf = MLPClassifier(
-                hidden_layer_sizes=(num_neurons, num_neurons, num_neurons),
-                max_iter=num_iterations
-            )
-    
-    return accuracy(clf, x, y)
+            hidden_layer_sizes=(num_neurons, num_neurons, num_neurons),
+            max_iter=num_iterations
+        )
+        pipeline = create_pipeline(clf)
+        return accuracy(pipeline, x, y)
 
 
 def test_gbc(x, y, tune):
     gbt = GradientBoostingClassifier(max_features="log2")
-    return accuracy(gbt, x, y)
+    pipeline = create_pipeline(gbt)
+    return accuracy(pipeline, x, y)
 
 
 def test_svm(x, y, tune):
@@ -70,33 +88,31 @@ def test_svm(x, y, tune):
     GAMMA = 0.03839085006161691
 
     if tune:
-        def svc_param_selection(X, y, jobs):
-            params = {'C': stats.uniform(0, 100),
-                      'gamma': stats.uniform(0, 1)}
+        params = {'clf__C': stats.uniform(0, 100),
+                  'clf__gamma': stats.uniform(0, 1)}
 
-            rand_search = RandomizedSearchCV(SVC(),
-                                             n_iter=20,
-                                             param_distributions=params,
-                                             n_jobs=jobs,
-                                             random_state=2017)
-            rand_search.fit(X, y)
-            print(rand_search.best_params_)
-            return rand_search.best_params_
-
-        best_params = svc_param_selection(x, y, 4)
-
-        svc = SVC(C=best_params['C'], gamma=best_params['gamma'])
+        rand_search = RandomizedSearchCV(create_pipeline(SVC()),
+                                         n_iter=20,
+                                         param_distributions=params,
+                                         n_jobs=-1,
+                                         cv=5,
+                                         random_state=2017)
+        rand_search.fit(x, y)
+        print("best_params: {0}".format(rand_search.best_params_))
+        return rand_search.best_score_ * 100
     else:
         svc = SVC(C=C, gamma=GAMMA)
-
-    return accuracy(svc, x, y)
+        pipeline = create_pipeline(svc)
+        return accuracy(pipeline, x, y)
 
 
 def test_rfc(x, y, tune):
     rft = RandomForestClassifier()
-    return accuracy(rft, x, y)
+    pipeline = create_pipeline(rft)
+    return accuracy(pipeline, x, y)
 
 
 def test_logistic_regression(x, y, tune):
     lrc = LogisticRegression()
-    return accuracy(lrc, x, y)
+    pipeline = create_pipeline(lrc)
+    return accuracy(pipeline, x, y)
