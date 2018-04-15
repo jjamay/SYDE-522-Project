@@ -58,7 +58,7 @@ def main(argv):
             optimize = True
         if opt == '-t':
             tune = True
-
+    print('justin: {0}'.format(opts))
     run(classifier, preprocess, optimize, tune)
 
 

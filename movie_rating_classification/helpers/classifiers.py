@@ -7,13 +7,41 @@ from sklearn.svm import SVC
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.linear_model import LogisticRegression
 from scipy import stats
+from sklearn.cross_validation import StratifiedKFold
 
 
 def test_mlp(x_tr, x_ts, y_tr, y_ts, tune):
-    num_neurons = x_tr.shape[1]
     num_iterations = 500
+    num_neurons = x_tr.shape[1]
 
-    clf = MLPClassifier(hidden_layer_sizes=(num_neurons, num_neurons, num_neurons), max_iter=num_iterations)
+    print('hit: {0}'.format(tune))
+
+    if tune:
+        print('yes')
+        parameters = {
+            'hidden_layer_sizes': [(num_neurons, num_neurons, num_neurons), (num_neurons*2, num_neurons*2, num_neurons*2)],
+            'activation': ['tanh', 'logistic', 'relu'],
+            'alpha': [0.0001, 0.001, 0.01, 0.1, 1, 10],
+            'max_iter': [200, 500],
+            'learning_rate_init': [0.001, 0.05, 0.5, 1]
+        }
+
+        clf = RandomizedSearchCV(
+            estimator=MLPClassifier(),
+            param_distributions=parameters,
+            n_jobs=-1,
+            cv=StratifiedKFold(y=y_tr, n_folds=5)
+        )
+
+        print("------ RESULTS --------")
+        print("best score: {0}".format(clf.best_score_))
+        print("best_estimator: {0}".format(clf.best_estimator_.C))
+    else:
+        clf = MLPClassifier(
+                hidden_layer_sizes=(num_neurons, num_neurons, num_neurons),
+                max_iter=num_iterations
+            )
+  
     clf.fit(x_tr, y_tr)
 
     p = clf.predict(x_ts)
