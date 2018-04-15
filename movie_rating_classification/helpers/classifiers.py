@@ -28,8 +28,8 @@ def test_mlp(x, y, tune):
             'hidden_layer_sizes': [(num_neurons, num_neurons, num_neurons), (2*num_neurons, 2*num_neurons, 2*num_neurons)],
             'activation': ['tanh', 'logistic', 'relu'],
             'alpha': [0.0001, 0.001, 0.01, 0.1, 1, 10],
-            'max_iter': [200, 500],
-            'learning_rate_init': [0.001, 0.05, 0.5, 1]
+            'max_iter': [200],
+            'learning_rate_init': [0.001, 0.05]
         }
 
         rand_search = RandomizedSearchCV(
@@ -49,7 +49,7 @@ def test_mlp(x, y, tune):
             max_iter=best_params['max_iter'],
             alpha=best_params['alpha'],
             learning_rate_init=best_params['learning_rate_init'],
-            verbose=10
+            verbose=10,
         )
     else:
         clf = MLPClassifier(
