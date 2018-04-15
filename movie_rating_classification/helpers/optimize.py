@@ -25,10 +25,8 @@ def optimize_for_clf(og_df, method, tune):
             training_data = TrainingData()
 
             accuracy = method(
-                training_data.X_tr,
-                training_data.X_ts,
-                training_data.Y_tr,
-                training_data.Y_ts,
+                training_data.X,
+                training_data.Y,
                 tune
             )
 
