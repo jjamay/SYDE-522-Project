@@ -20,9 +20,7 @@ def classify(method, preprocess, tune):
     training_data = TrainingData()
 
     return method(
-        training_data.X_tr,
-        training_data.X_ts,
-        training_data.Y_tr,
-        training_data.Y_ts,
+        training_data.X,
+        training_data.Y,
         tune
     )
