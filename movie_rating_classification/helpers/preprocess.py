@@ -60,11 +60,20 @@ def remove_rows_without_revenue_cost(df):
     return df[np.isfinite(df['revenue_divide_budget'])]
 
 
-# def remove_rows_with_non_english_movies(df):
-#     # returns a pandas dataframe
-#     df = df[df['original_language'] == 'en']
-#     df = df.drop(['original_language'], 1)
-#     return df
+def remove_rows_without_revenue(df):
+    # returns a pandas dataframe
+    return df[np.isfinite(df['revenue'])]
+
+
+def remove_rows_without_budget(df):
+    # returns a pandas dataframe
+    return df[np.isfinite(df['budget'])]
+
+
+def remove_rows_with_non_english_movies(df):
+    # returns a pandas dataframe
+    df = df[df['original_language'] == 'en']
+    return df
 
 
 def random_sample_average_class(df):
@@ -72,7 +81,7 @@ def random_sample_average_class(df):
     200 movies from each decimal rating in this class to
     balance data """
 
-    N = 200
+    N = 25
     for i in np.arange(5.0, 7.5, 0.1):
         rows = df[df.vote_average == round(i, 1)]
         rows = rows.sample(n=N)
@@ -329,8 +338,7 @@ def drop_unnecessary_columns(df):
         'production_companies',
         'production_countries',
         'genres',
-        # 'original_language', # already dropped 
-        'revenue',
+        'original_language',
         # 'vote_count',
         'adult',  # No adult movies
         'release_date',  # ADD BACK IN WHEN READY
@@ -338,7 +346,6 @@ def drop_unnecessary_columns(df):
         'title',
         'tagline',
         'vote_average',
-        'budget'
     ], 1)
     return df
 
@@ -346,6 +353,7 @@ def drop_unnecessary_columns(df):
 def preprocess_data(df, min_vote_count=1000, backfill_method='mean'):
     # note that order matters!
     df = remove_rows_without_revenue_cost(df)
+    # df = remove_rows_without_budget(df)
     # df = remove_rows_with_non_english_movies(df)
     # df = random_sample_average_class(df)
     df = binarize_homepage(df)

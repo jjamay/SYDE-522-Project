@@ -4,7 +4,7 @@ from movie_rating_classification.helpers.classifiers import (
     test_gbc,
     test_svm,
     test_logistic_regression
-    )
+)
 from movie_rating_classification.helpers.optimize import optimize_for_clf
 from movie_rating_classification.helpers.classify import classify
 
