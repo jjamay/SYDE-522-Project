@@ -4,6 +4,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import Normalizer
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import LabelEncoder
+from sklearn.feature_extraction.text import TfidfVectorizer
+
 import pandas as pd
 import numpy as np
 
@@ -42,7 +44,7 @@ class TrainingData:
             ('popularity', None),
             ('runtime', None),
             ('spoken_languages', None),
-#             ('keywords', HashingVectorizer(n_features=N)),
+            # ('keywords', TfidfVectorizer()),
             ('cast_size', None),
             ('crew_size', None),
             ('production_score', None),

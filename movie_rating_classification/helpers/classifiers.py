@@ -38,7 +38,7 @@ def test_svm(x_tr, x_ts, y_tr, y_ts, tune):
 
     if tune:
         def svc_param_selection(X, y, jobs):
-            params = {'C': stats.uniform(0, 10),
+            params = {'C': stats.uniform(0, 100),
                       'gamma': stats.uniform(0, 1)}
 
             rand_search = RandomizedSearchCV(SVC(),
@@ -51,9 +51,9 @@ def test_svm(x_tr, x_ts, y_tr, y_ts, tune):
 
         best_params = svc_param_selection(x_tr, y_tr, 4)
 
-        svc = SVC(kernel='rbf', C=best_params['C'], gamma=best_params['gamma'])
+        svc = SVC(kernel='linear', C=best_params['C'], gamma=best_params['gamma'])
     else:
-        svc = SVC(kernel='rbf', C=C, gamma=GAMMA)
+        svc = SVC(kernel='linear', C=C, gamma=GAMMA)
 
     svc.fit(x_tr, y_tr)
 

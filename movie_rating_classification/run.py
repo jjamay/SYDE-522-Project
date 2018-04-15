@@ -41,13 +41,10 @@ def main(argv):
     optimize = False
     tune = False
 
-    try:
-        opts, args = getopt.getopt(argv, "hpotc:")
-    except getopt.GetoptError:
-        print 'run.py <classifier> -p -o -t'
-        sys.exit(2)
+    classifier = argv[0]
 
-    classifier = args[0]
+    opts, args = getopt.getopt(argv[1:], "hpotc:")
+
     for opt, arg in opts:
         if opt == '-h':
             print 'run.py <classifier> -p -o -t'
