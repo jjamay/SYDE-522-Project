@@ -8,7 +8,7 @@ MIN_VOTE_COUNT = 100
 BACKFILL_METHOD = 'median'
 
 
-def classify(og_df, method, preprocess):
+def classify(method, preprocess, tune):
     if preprocess:
         preprocess_data(
             get_data(),
@@ -23,5 +23,6 @@ def classify(og_df, method, preprocess):
         training_data.X_tr,
         training_data.X_ts,
         training_data.Y_tr,
-        training_data.Y_ts
+        training_data.Y_ts,
+        tune
     )

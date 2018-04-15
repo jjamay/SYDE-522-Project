@@ -24,5 +24,8 @@ To run data preprocessing before classifying
 -o
 To run optimization instead of just classifying
 
+-t
+To tune classifier parameters
+
 -h
 Help
