@@ -25,24 +25,32 @@ def test_mlp(x, y, tune):
 
     if tune:
         parameters = {
-            'hidden_layer_sizes': [(num_neurons, num_neurons, num_neurons), (num_neurons*2, num_neurons*2, num_neurons*2)],
+            'hidden_layer_sizes': [(num_neurons, num_neurons, num_neurons), (2*num_neurons, 2*num_neurons, 2*num_neurons)],
             'activation': ['tanh', 'logistic', 'relu'],
             'alpha': [0.0001, 0.001, 0.01, 0.1, 1, 10],
             'max_iter': [200, 500],
             'learning_rate_init': [0.001, 0.05, 0.5, 1]
         }
 
-        clf = RandomizedSearchCV(
+        rand_search = RandomizedSearchCV(
             estimator=MLPClassifier(),
             param_distributions=parameters,
             n_jobs=-1,
             cv=StratifiedKFold(y=y, n_folds=5)
         )
 
-        clf.fit(x, y)
-        print("------ RESULTS --------")
-        print("best score: {0}".format(clf.best_score_))
-        print("best_params: {0}".format(clf.best_params_))
+        rand_search.fit(x, y)
+        best_params = rand_search.best_params_
+        print("best_params: {0}".format(best_params))
+
+        clf = MLPClassifier(
+            hidden_layer_sizes=best_params['hidden_layer_sizes'],
+            activation=best_params['activation'],
+            max_iter=best_params['max_iter'],
+            alpha=best_params['alpha'],
+            learning_rate_init=best_params['learning_rate_init'],
+            verbose=10
+        )
     else:
         clf = MLPClassifier(
                 hidden_layer_sizes=(num_neurons, num_neurons, num_neurons),
