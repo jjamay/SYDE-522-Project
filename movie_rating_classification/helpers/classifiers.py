@@ -1,7 +1,5 @@
 from sklearn.neural_network import MLPClassifier
-from sklearn.ensemble import (
-    GradientBoostingClassifier,
-    RandomForestClassifier)
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.svm import SVC
 from sklearn.model_selection import (
     RandomizedSearchCV,
@@ -51,7 +49,7 @@ def test_mnb(x, y, tune):
         print("best_params: {0}".format(best_params))
         return rand_search.best_score_ * 100
     else:
-        mnb = MultinomialNB(alpha=0.19383194558775096)
+        mnb = MultinomialNB()
         pipeline = create_pipeline(mnb)
         return accuracy(pipeline, x, y)
 
@@ -87,6 +85,7 @@ def test_mlp(x, y, tune):
             learning_rate_init=0.001,
             alpha=0.001
         )
+
         pipeline = create_pipeline(clf)
         print(get_classification_report(clf, x, y))
         return accuracy(pipeline, x, y)
@@ -99,9 +98,6 @@ def test_gbc(x, y, tune):
 
 
 def test_svm(x, y, tune):
-    C = 40.82342548346405
-    GAMMA = 0.03839085006161691
-
     if tune:
         params = {'clf__C': stats.uniform(0, 100),
                   'clf__gamma': stats.uniform(0, 1)}
@@ -116,7 +112,7 @@ def test_svm(x, y, tune):
         print("best_params: {0}".format(rand_search.best_params_))
         return rand_search.best_score_ * 100
     else:
-        svc = SVC(C=C, gamma=GAMMA)
+        svc = SVC()
         pipeline = create_pipeline(svc)
         return accuracy(pipeline, x, y)
 

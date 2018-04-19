@@ -66,21 +66,6 @@ def remove_rows_with_non_english_movies(df):
     return df
 
 
-def random_sample_average_class(df):
-    """ Since the 'average' class dominates, randomly sample
-    200 movies from each decimal rating in this class to
-    balance data """
-
-    N = 40
-    for i in np.arange(5.0, 7.5, 0.1):
-        rows = df[df.vote_average == round(i, 1)]
-        rows = rows.sample(n=N)
-        df = df[df.vote_average != round(i, 1)]
-        df = df.append(rows, ignore_index=True)
-
-    return df
-
-
 def bin_ratings(df):
 
     def bin(val):
@@ -346,7 +331,6 @@ def preprocess_data(df, min_vote_count=1000):
     df = remove_rows_without_feature(df, 'budget')
     df = remove_rows_without_feature(df, 'runtime')
     df = remove_rows_with_non_english_movies(df)
-    # df = random_sample_average_class(df)
     df = binarize_homepage(df)
     df = add_producers_feature(df)
     df = add_executive_producers_feature(df)
