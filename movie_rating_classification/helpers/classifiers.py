@@ -1,7 +1,5 @@
 from sklearn.neural_network import MLPClassifier
-from sklearn.ensemble import (
-    GradientBoostingClassifier,
-    RandomForestClassifier)
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.svm import SVC
 from sklearn.model_selection import (RandomizedSearchCV, cross_val_score)
 from sklearn.linear_model import LogisticRegression
@@ -39,7 +37,7 @@ def test_mnb(x, y, tune):
         print("best_params: {0}".format(best_params))
         return rand_search.best_score_ * 100
     else:
-        mnb = MultinomialNB(alpha=0.19383194558775096)
+        mnb = MultinomialNB()
         pipeline = create_pipeline(mnb)
         return accuracy(pipeline, x, y)
 
@@ -69,10 +67,7 @@ def test_mlp(x, y, tune):
         print("best_params: {0}".format(best_params))
         return rand_search.best_score_ * 100
     else:
-        clf = MLPClassifier(
-            hidden_layer_sizes=(num_neurons, num_neurons, num_neurons),
-            max_iter=num_iterations
-        )
+        clf = MLPClassifier()
         pipeline = create_pipeline(clf)
         return accuracy(pipeline, x, y)
 
@@ -84,9 +79,6 @@ def test_gbc(x, y, tune):
 
 
 def test_svm(x, y, tune):
-    C = 40.82342548346405
-    GAMMA = 0.03839085006161691
-
     if tune:
         params = {'clf__C': stats.uniform(0, 100),
                   'clf__gamma': stats.uniform(0, 1)}
@@ -101,7 +93,7 @@ def test_svm(x, y, tune):
         print("best_params: {0}".format(rand_search.best_params_))
         return rand_search.best_score_ * 100
     else:
-        svc = SVC(C=C, gamma=GAMMA)
+        svc = SVC()
         pipeline = create_pipeline(svc)
         return accuracy(pipeline, x, y)
 
