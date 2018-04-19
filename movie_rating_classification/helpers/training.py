@@ -31,7 +31,8 @@ class TrainingData:
     def generate_features(self, data):
         mapper = DataFrameMapper([
             ('belongs_to_collection', None),
-            ('revenue_divide_budget', None),
+            # ('revenue_divide_budget', None),
+            ('budget', None),
             ('homepage', None),
             ('popularity', None),
             ('runtime', None),
@@ -66,7 +67,7 @@ class TrainingData:
             ('prod_usa', None),
             ('prod_france', None),
             ('prod_other', None),
-            ('vote_count', None)
+            # ('vote_count', None)
         ], input_df=True)
 
         return mapper.fit_transform(data)
