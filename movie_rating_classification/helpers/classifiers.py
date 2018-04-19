@@ -70,7 +70,7 @@ def test_mlp(x, y, tune):
             estimator=create_pipeline(MLPClassifier(verbose=10)),
             param_distributions=parameters,
             n_jobs=-1,
-            cv=5
+            cv=5,
         )
 
         rand_search.fit(x, y)
@@ -87,7 +87,7 @@ def test_mlp(x, y, tune):
         )
 
         pipeline = create_pipeline(clf)
-        print(get_classification_report(clf, x, y))
+        print(get_classification_report(pipeline, x, y))
         return accuracy(pipeline, x, y)
 
 
