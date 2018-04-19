@@ -24,12 +24,12 @@ class TrainingData:
 
         self.X = self.generate_features(self.X)
 
-        sme = SMOTEENN()
-        self.X, self.Y = sme.fit_sample(self.X, self.Y)
+        sm = SMOTEENN()
+        self.X, self.Y = sm.fit_sample(self.X, self.Y)
 
         print(collections.Counter(self.Y))
 
-        # pca = PCA(n_components=35)
+        # pca = PCA()
         # self.X = pca.fit_transform(self.X)
 
         label_enc = LabelEncoder()
