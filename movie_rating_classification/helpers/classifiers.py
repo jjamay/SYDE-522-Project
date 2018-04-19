@@ -12,19 +12,22 @@ from sklearn.preprocessing import (StandardScaler, MinMaxScaler)
 from sklearn.pipeline import Pipeline
 from sklearn.naive_bayes import GaussianNB
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, confusion_matrix
 
 
 
 def accuracy(clf, x, y, cv=5):
+    print_classification_info(clf, x, y)
     return cross_val_score(clf, x, y, cv=cv).mean() * 100
 
 
-def get_classification_report(clf, x, y):
+def print_classification_info(clf, x, y):
     x_tr, x_ts, y_tr, y_ts = train_test_split(x, y, train_size=0.8)
     clf.fit(x_tr,y_tr)
     p = clf.predict(x_ts)
-    return classification_report(y_ts, p)
+    print(classification_report(y_ts, p))
+    print(confusion_matrix(y_ts, p))
+
 
 def create_pipeline(clf):
     return Pipeline([('scaler', MinMaxScaler()), ('clf', clf)])
@@ -87,7 +90,6 @@ def test_mlp(x, y, tune):
         )
 
         pipeline = create_pipeline(clf)
-        print(get_classification_report(pipeline, x, y))
         return accuracy(pipeline, x, y)
 
 
