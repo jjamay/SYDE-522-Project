@@ -3,18 +3,30 @@ from sklearn.ensemble import (
     GradientBoostingClassifier,
     RandomForestClassifier)
 from sklearn.svm import SVC
-from sklearn.model_selection import (RandomizedSearchCV, cross_val_score)
+from sklearn.model_selection import (
+    RandomizedSearchCV,
+    cross_val_score,
+    train_test_split
+)
 from sklearn.linear_model import LogisticRegression
 from scipy import stats
 from sklearn.preprocessing import (StandardScaler, MinMaxScaler)
 from sklearn.pipeline import Pipeline
 from sklearn.naive_bayes import GaussianNB
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import classification_report
+
 
 
 def accuracy(clf, x, y, cv=5):
     return cross_val_score(clf, x, y, cv=cv).mean() * 100
 
+
+def get_classification_report(clf, x, y):
+    x_tr, x_ts, y_tr, y_ts = train_test_split(x, y, train_size=0.8)
+    clf.fit(x_tr,y_tr)
+    p = clf.predict(x_ts)
+    return classification_report(y_ts, p)
 
 def create_pipeline(clf):
     return Pipeline([('scaler', MinMaxScaler()), ('clf', clf)])
@@ -45,7 +57,6 @@ def test_mnb(x, y, tune):
 
 
 def test_mlp(x, y, tune):
-    num_iterations = 500
     num_neurons = x.shape[1]
 
     if tune:
@@ -70,10 +81,14 @@ def test_mlp(x, y, tune):
         return rand_search.best_score_ * 100
     else:
         clf = MLPClassifier(
-            hidden_layer_sizes=(num_neurons, num_neurons, num_neurons),
-            max_iter=num_iterations
+            hidden_layer_sizes=(2*num_neurons, 2*num_neurons, 2*num_neurons),
+            max_iter=200,
+            activation='tanh',
+            learning_rate_init=0.001,
+            alpha=0.001
         )
         pipeline = create_pipeline(clf)
+        print(get_classification_report(clf, x, y))
         return accuracy(pipeline, x, y)
 
 
