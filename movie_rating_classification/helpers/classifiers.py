@@ -114,7 +114,10 @@ def test_svm(x, y, tune):
         print("best_params: {0}".format(rand_search.best_params_))
         return rand_search.best_score_ * 100
     else:
-        svc = SVC()
+        svc = SVC(
+            gamma=0.93121875826256051,
+            C=70.331975797816796
+        )
         pipeline = create_pipeline(svc)
         return accuracy(pipeline, x, y)
 
