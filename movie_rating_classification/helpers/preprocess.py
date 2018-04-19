@@ -56,19 +56,8 @@ def get_role_list(people, role):
     return crew if len(crew) else []
 
 
-def remove_rows_without_revenue_and_budget(df):
-    # returns a pandas dataframe
-    return df[np.isfinite(df['revenue_divide_budget'])]
-
-
-def remove_rows_without_revenue(df):
-    # returns a pandas dataframe
-    return df[np.isfinite(df['revenue'])]
-
-
-def remove_rows_without_budget(df):
-    # returns a pandas dataframe
-    return df[np.isfinite(df['budget'])]
+def remove_rows_without_feature(df,  feature):
+    return df[np.isfinite(df[feature])]
 
 
 def remove_rows_with_non_english_movies(df):
@@ -340,21 +329,22 @@ def drop_unnecessary_columns(df):
         'production_countries',
         'genres',
         'original_language',
-        # 'vote_count',
         'adult',  # No adult movies
         'release_date',  # ADD BACK IN WHEN READY
         'overview',
         'title',
         'tagline',
         'vote_average',
+        'popularity',
+        'vote_count'
     ], 1)
     return df
 
 
 def preprocess_data(df, min_vote_count=1000, backfill_method='mean'):
     # note that order matters!
-    # df = remove_rows_without_revenue_and_budget(df)
-    df = remove_rows_without_budget(df)
+    df = remove_rows_without_feature(df, 'budget')
+    df = remove_rows_without_feature(df, 'runtime')
     df = remove_rows_with_non_english_movies(df)
     # df = random_sample_average_class(df)
     df = binarize_homepage(df)
@@ -369,10 +359,7 @@ def preprocess_data(df, min_vote_count=1000, backfill_method='mean'):
     df = binarize_production_countries(df)
     df = convert_keywords_to_string(df)
     df = drop_unnecessary_columns(df)
-    # df = fill_empty_values(df, 'budget', backfill_method)
-    df = fill_empty_values(df, 'runtime', backfill_method)
-    # df = fill_empty_values(df, 'revenue_divide_budget', backfill_method)
-
+    
     # Export to CSV
     y = df[['rating']]
     x = df.drop(['rating'], 1)

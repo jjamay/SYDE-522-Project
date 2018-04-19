@@ -38,17 +38,13 @@ class TrainingData:
     def generate_features(self, data):
         mapper = DataFrameMapper([
             ('belongs_to_collection', None),
-            # ('revenue_divide_budget', None),
             ('budget', None),
             ('homepage', None),
-            # ('popularity', None),
             ('runtime', None),
             ('spoken_languages', None),
-            # ('keywords', TfidfVectorizer()),
             ('cast_size', None),
             ('crew_size', None),
             ('production_score', None),
-        #    ('release_date', None),
             ('is_english', None),
             ('is_drama', None),
             ('is_comedy', None),
@@ -74,7 +70,6 @@ class TrainingData:
             ('prod_usa', None),
             ('prod_france', None),
             ('prod_other', None),
-            # ('vote_count', None)
         ], input_df=True)
 
         return mapper.fit_transform(data)
