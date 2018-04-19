@@ -341,7 +341,7 @@ def drop_unnecessary_columns(df):
     return df
 
 
-def preprocess_data(df, min_vote_count=1000, backfill_method='mean'):
+def preprocess_data(df, min_vote_count=1000):
     # note that order matters!
     df = remove_rows_without_feature(df, 'budget')
     df = remove_rows_without_feature(df, 'runtime')
@@ -359,7 +359,7 @@ def preprocess_data(df, min_vote_count=1000, backfill_method='mean'):
     df = binarize_production_countries(df)
     df = convert_keywords_to_string(df)
     df = drop_unnecessary_columns(df)
-    
+
     # Export to CSV
     y = df[['rating']]
     x = df.drop(['rating'], 1)
