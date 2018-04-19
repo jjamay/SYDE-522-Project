@@ -2,6 +2,7 @@ import ast
 import numpy as np
 import pandas as pd
 
+
 pd.options.mode.chained_assignment = None  # default='warn'
 
 CREW_ATTRIBUTES = ['cast', 'director', 'production_companies', 'producers', 'executive_producers']
@@ -355,7 +356,7 @@ def preprocess_data(df, min_vote_count=1000, backfill_method='mean'):
     # df = remove_rows_without_revenue_and_budget(df)
     df = remove_rows_without_budget(df)
     df = remove_rows_with_non_english_movies(df)
-    df = random_sample_average_class(df)
+    # df = random_sample_average_class(df)
     df = binarize_homepage(df)
     df = add_producers_feature(df)
     df = add_executive_producers_feature(df)
@@ -372,10 +373,9 @@ def preprocess_data(df, min_vote_count=1000, backfill_method='mean'):
     df = fill_empty_values(df, 'runtime', backfill_method)
     # df = fill_empty_values(df, 'revenue_divide_budget', backfill_method)
 
-    print(df.rating.value_counts())
     # Export to CSV
     y = df[['rating']]
-    y.to_csv(r'../dataset/Y.csv', index=False)
-    df = df.drop(['rating'], 1)
+    x = df.drop(['rating'], 1)
 
-    df.to_csv(r'../dataset/X.csv', index=True, index_label='Id')
+    y.to_csv(r'../dataset/Y.csv', index=False)
+    x.to_csv(r'../dataset/X.csv', index=True, index_label='Id')

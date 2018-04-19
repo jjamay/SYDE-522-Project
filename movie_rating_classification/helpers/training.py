@@ -3,7 +3,9 @@ from sklearn_pandas import DataFrameMapper
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import PCA
+from imblearn.combine import SMOTEENN
 
+import collections
 import pandas as pd
 import numpy as np
 
@@ -21,6 +23,11 @@ class TrainingData:
         self.Y = np.reshape(self.Y.values, [self.Y.shape[0], ])
 
         self.X = self.generate_features(self.X)
+
+        sme = SMOTEENN()
+        self.X, self.Y = sme.fit_sample(self.X, self.Y)
+
+        print(collections.Counter(self.Y))
 
         # pca = PCA(n_components=35)
         # self.X = pca.fit_transform(self.X)
