@@ -41,7 +41,7 @@ class TrainingData:
             # ('revenue_divide_budget', None),
             ('budget', None),
             ('homepage', None),
-            ('popularity', None),
+            # ('popularity', None),
             ('runtime', None),
             ('spoken_languages', None),
             # ('keywords', TfidfVectorizer()),
