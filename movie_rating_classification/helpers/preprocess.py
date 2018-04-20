@@ -259,13 +259,14 @@ def get_avg_scores_for_attribute(df, attribute, min_vote_count):
 
 def calculate_total_score(data, ratings):
     """Summary
+    Calculates the total score for a specific attribute
 
     Args:
-        data (TYPE): Description
-        ratings (TYPE): Description
+        data (array of strings): contains list of names (actors, directors, producers, or executive producers)
+        ratings (dictionary): dictionary that maps an actor to its rating
 
     Returns:
-        TYPE: Description
+        float: total score
     """
     total_score = 0
 
@@ -278,13 +279,21 @@ def calculate_total_score(data, ratings):
 
 def calculate_final_production_score(row, ratings):
     """Summary
+    for every actor, producer, executive producer and director who is in a movie with more than min_vote_count, 
+    we take the average of the rating of every movie that the person participated in and generate maps {producer:rating}, 
+    {director:rating} etc.
+
+    for every movie, we calculate a production score which is equal to 
+    sum(actor ratings) + avg(director ratings) + avg(producer ratings) + avg(executive producer ratings)
+
+    we take the sum of actors because generally the number of popular actors involved in a movie is directly related to how good a movie is (think Ocean's 11)
 
     Args:
-        row (TYPE): Description
-        ratings (TYPE): Description
+        row (dataframe): row in the dataframe
+        ratings (dictionary): dictionary that maps an actor to its rating
 
     Returns:
-        TYPE: Description
+        float: final score
     """
     scores = {}
 
