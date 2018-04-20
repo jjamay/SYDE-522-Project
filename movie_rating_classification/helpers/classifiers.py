@@ -204,7 +204,10 @@ def test_svm(x, y, tune):
         return rand_search.best_score_ * 100
     else:
         # Perform classification without tuning
-        svc = SVC(gamma=0.93121875826256051, C=70.331975797816796)
+        svc = SVC(
+            gamma=0.93121875826256051,
+            C=70.331975797816796
+        )
         pipeline = create_pipeline(svc)
         return accuracy(pipeline, x, y)
 
