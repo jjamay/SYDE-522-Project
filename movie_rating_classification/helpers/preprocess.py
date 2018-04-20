@@ -8,44 +8,17 @@ pd.options.mode.chained_assignment = None  # default='warn'
 CREW_ATTRIBUTES = ['cast', 'director', 'production_companies', 'producers', 'executive_producers']
 
 
-# def is_all_ascii(chars):
-#     if type(chars) == type([]):
-#         chars = list_of_str_to_str(chars)
-
-#     if pd.isnull(chars):
-#         return True
-
-#     printable = set(string.printable)
-#     for char in chars:
-#         if char not in printable:
-#             return False
-
-#     return True
-
-
-def list_of_str_to_str(list_of_str):
-    list_of_str = get_literal_eval(list_of_str)
-    to_remove = []
-
-    # remove non unicode words
-    for i in range(len(list_of_str)):
-        list_of_str[i] = list_of_str[i].replace('\xa0', ' ')
-        word = list_of_str[i]
-
-        if any(char.isdigit() for char in word):
-            to_remove.append(word)
-
-        try:
-            word.decode()
-        except:
-            if word not in to_remove:
-                to_remove.append(word)
-
-    filtered_list_of_str = [word for word in list_of_str if word not in to_remove]
-    return " ".join(filtered_list_of_str)
-
-
 def get_role_list(people, role):
+    """Gets a list of all people involved in a movie who's
+    job is a certain role
+
+    Args:
+        people (String): String literal of all people in a movie crew
+        role (String): Role
+
+    Returns:
+        List: list of people whose job is the specified role
+    """
     people = ast.literal_eval(people)
     crew = []
 
@@ -56,18 +29,42 @@ def get_role_list(people, role):
     return crew if len(crew) else []
 
 
-def remove_rows_without_feature(df,  feature):
+def remove_rows_without_feature(df, feature):
+    """Removes all rows with missing value for feature
+
+    Args:
+        df (DataFrame): Pandas dataframe
+        feature (String): Feature name
+
+    Returns:
+        DataFrame: Modified dataframe
+    """
     return df[np.isfinite(df[feature])]
 
 
 def remove_rows_with_non_english_movies(df):
-    # returns a pandas dataframe
+    """Removes all rows with english as the original language
+
+    Args:
+        df (DataFrame): Pandas dataframe
+
+    Returns:
+        DataFrame: Modified dataframe
+    """
     df = df[df['original_language'] == 'en']
     return df
 
 
 def bin_ratings(df):
+    """Bins movie ratings into one of four categories:
+    terrible, poor, average, and excellent
 
+    Args:
+        df (DataFrame): Pandas dataframe
+
+    Returns:
+        DataFrame: Modified dataframe
+    """
     def bin(val):
         if val < 2.5:
             return 'terrible'
@@ -82,31 +79,84 @@ def bin_ratings(df):
 
 
 def binarize_english(df):
+    """Performs binarization of original language
+    1 if english, 0 if not
+
+     Args:
+        df (DataFrame): Pandas dataframe
+
+    Returns:
+        DataFrame: Modified dataframe
+    """
     df['is_english'] = df['original_language'].apply(lambda x: 1 if x == 'en' else 0)
     return df
 
 
 def binarize_homepage(df):
+    """Performs binarization of homepage
+    1 if there is a homepage, 0 if not
+
+    Args:
+        df (DataFrame): Pandas dataframe
+
+    Returns:
+        DataFrame: Modified dataframe
+    """
     df['homepage'] = df['homepage'].apply(lambda x: 0 if pd.isnull(x) else 1)
     return df
 
 
 def binarize_belongs_to_collection(df):
+    """Performs binarization of belongs_to_collection
+    1 if movie belonds to a collection, 0 if not
+
+    Args:
+        df (DataFrame): Pandas dataframe
+
+    Returns:
+        DataFrame: Modified dataframe
+    """
     df['belongs_to_collection'] = df['belongs_to_collection'].apply(lambda x: 0 if pd.isnull(x) else 1)
     return df
 
 
 def add_producers_feature(df):
+    """Extracts all the producers from a movie crew list
+    and adds a new column containing a list of them
+
+    Args:
+        df (DataFrame): Pandas dataframe
+
+    Returns:
+        DataFrame: Modified dataframe
+    """
     df['producers'] = df['crew'].apply(get_role_list, role='Producer')
     return df
 
 
 def add_executive_producers_feature(df):
+    """Extracts all the executive producers from a movie crew list
+    and adds a new column containing a list of them
+
+    Args:
+        df (DataFrame): Pandas dataframe
+
+    Returns:
+        DataFrame: Modified dataframe
+    """
     df['executive_producers'] = df['crew'].apply(get_role_list, role='Executive Producer')
     return df
 
 
 def binarize_genres(df):
+    """Performs Multi-label binarization on the genre column
+
+     Args:
+        df (DataFrame): Pandas dataframe
+
+    Returns:
+        DataFrame: Modified dataframe
+    """
     df['genres'] = df['genres'].apply(lambda x: [] if pd.isnull(x) else ast.literal_eval(x))
 
     genres = [
@@ -137,42 +187,27 @@ def binarize_genres(df):
     return df
 
 
-# def remove_rows_with_non_ascii(df):
-#     text_cols = [
-#         # 'genres',
-#         'overview',
-#         'production_companies',
-#         'production_countries',
-#         'tagline',
-#         'title',
-#         'cast',
-#         'keywords',
-#         'director',
-#         'producers',
-#         'executive_producers',
-#         'belongs_to_collection'
-#     ]
-
-#     for col in text_cols:
-#         df = df[df[col].apply(is_all_ascii)]
-
-#     return df
-
-
 def generate_name_key(str):
-    '''
-    examples of str: Tom Hanks, Michael, Michael Buble Test
-    '''
+    """Helper function to generate a unique key for a string
 
+    Args:
+        str (String): string to generate key for
+
+    Returns:
+        String: Unique key
+    """
     return str.decode('utf-8', errors='replace').lower().replace(' ', '_')
 
 
 def get_literal_eval(data):
-    '''
-    probably could use a better name
-    returns literal_eval or returns original data in list form (for director)
-    '''
+    """Returns evaluation of string literal
+    of original data in list format
+    Args:
+        data (String): String literal to evaluate
 
+    Returns:
+        List(String): List evaluated from string
+    """
     if type(data) != type([]):
         try:
             return ast.literal_eval(data)
@@ -183,6 +218,18 @@ def get_literal_eval(data):
 
 
 def get_avg_scores_for_attribute(df, attribute, min_vote_count):
+    """
+
+    Args:
+        df (DataFrame): Pandas dataframe
+        attribute (String): Attribute to calculate scores for
+        min_vote_count (Integer): Movies must have more than
+                                  this number of votes for their
+                                  rating to be included in the calculation
+
+    Returns:
+        DataFrame: Modified dataframe
+    """
     ratings = {}
 
     movies = df[df['vote_count'] > min_vote_count]
@@ -211,10 +258,15 @@ def get_avg_scores_for_attribute(df, attribute, min_vote_count):
 
 
 def calculate_total_score(data, ratings):
-    '''
-    calculates total score for actors, production_companies, etc.
-    '''
+    """Summary
 
+    Args:
+        data (TYPE): Description
+        ratings (TYPE): Description
+
+    Returns:
+        TYPE: Description
+    """
     total_score = 0
 
     for x in data:
@@ -225,6 +277,15 @@ def calculate_total_score(data, ratings):
 
 
 def calculate_final_production_score(row, ratings):
+    """Summary
+
+    Args:
+        row (TYPE): Description
+        ratings (TYPE): Description
+
+    Returns:
+        TYPE: Description
+    """
     scores = {}
 
     for x in CREW_ATTRIBUTES:
@@ -247,6 +308,18 @@ def calculate_final_production_score(row, ratings):
 
 
 def get_movie_scores(df, min_vote_count=1000):
+    """Calculates a production score for each movie based on a number
+    of movie attributes
+
+    Args:
+        df (DataFrame): Pandas dataframe
+        min_vote_count (Integer): Movies must have more than
+                                  this number of votes for their
+                                  rating to be included in the calculation
+
+    Returns:
+        DataFrame: Modified dataframe
+    """
     ratings = {}
 
     for x in CREW_ATTRIBUTES:
@@ -257,6 +330,14 @@ def get_movie_scores(df, min_vote_count=1000):
 
 
 def binarize_production_countries(df):
+    """Performs multi-label binarization for production_countries
+
+    Args:
+        df (DataFrame): Pandas dataframe
+
+    Returns:
+        DataFrame: Modified dataframe
+    """
     df['production_countries'] = df['production_countries'].apply(lambda x: get_literal_eval(x))
     countries = {
         'United States of America': 'usa',
@@ -278,55 +359,54 @@ def binarize_production_countries(df):
     return df
 
 
-def convert_keywords_to_string(df):
-    df['keywords'] = df['keywords'].apply(list_of_str_to_str)
-    return df
-
-
-def fill_empty_values(df, attribute, method='mean'):
-    temp_df = df[df[attribute].notnull()]
-
-    if method == 'mode':
-        df[attribute].fillna(temp_df[attribute].mode()[0], inplace=True)
-    elif method == 'median':
-        df[attribute].fillna(temp_df[attribute].median(), inplace=True)
-    else:
-        df[attribute].fillna(temp_df[attribute].mean(), inplace=True)
-
-    return df
-
-
 def drop_unnecessary_columns(df):
+    """Drops all columns not needed for training
+
+    Args:
+        df (DataFrame): Pandas dataframe
+
+    Returns:
+        DataFrame: Modified dataframe
+    """
     df = df.drop([
         'id',
         'imdb_id',
         'poster_path',
         'video',
         'status',
-        'weighted_rating',
+        'weighted_rating',  # Only average_rating was used for this project
         'original_title',
-        'crew',
-        'producers',
-        'executive_producers',
-        'cast',
-        'director',
-        'production_companies',
-        'production_countries',
-        'genres',
-        'original_language',
-        'adult',  # No adult movies
-        'release_date',  # ADD BACK IN WHEN READY
+        'crew',  # Used in production_score
+        'producers',  # Used in production_score
+        'executive_producers',  # Used in production_score
+        'cast',  # Used in production_score
+        'director',  # Used in production_score
+        'production_companies',  # Used in production_score
+        'production_countries',  # Binarized
+        'genres',  # Binarized
+        'original_language',  # Binarized
+        'adult',  # No adult movies in the dataset, so no variance between movies
+        'release_date',  # Not being considered for this project
         'overview',
         'title',
         'tagline',
-        'vote_average',
-        'popularity',
-        'vote_count'
+        'vote_average',  # Ratings have been binned
+        'popularity',  # Only considering average_rating
+        'vote_count',  # We are making a predictor, so it makes no sense to use vote counts as input
+        'revenue',  # We are making a predictor, so it makes no sense to use revenue as input
+        'keywords',  # Not considering keywords for this project
+        'revenue_divide_budget',  # We are making a predictor, so it makes no sense to use revenue/budget as input
     ], 1)
     return df
 
 
 def preprocess_data(df, min_vote_count=1000):
+    """Performs all data preprocessing and exports input and output
+    csv files
+
+    Args:
+        df (DataFrame): Pandas dataframe
+    """
     # note that order matters!
     df = remove_rows_without_feature(df, 'budget')
     df = remove_rows_without_feature(df, 'runtime')
@@ -334,14 +414,12 @@ def preprocess_data(df, min_vote_count=1000):
     df = binarize_homepage(df)
     df = add_producers_feature(df)
     df = add_executive_producers_feature(df)
-    # df = remove_rows_with_non_ascii(df)
     df = get_movie_scores(df, min_vote_count)
     df = binarize_english(df)
     df = bin_ratings(df)
     df = binarize_genres(df)
     df = binarize_belongs_to_collection(df)
     df = binarize_production_countries(df)
-    df = convert_keywords_to_string(df)
     df = drop_unnecessary_columns(df)
 
     # Export to CSV
@@ -349,4 +427,4 @@ def preprocess_data(df, min_vote_count=1000):
     x = df.drop(['rating'], 1)
 
     y.to_csv(r'../dataset/Y.csv', index=False)
-    x.to_csv(r'../dataset/X.csv', index=True, index_label='Id')
+    x.to_csv(r'../dataset/X.csv', index=False)
