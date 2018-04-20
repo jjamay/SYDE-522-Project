@@ -1,6 +1,5 @@
 from movie_rating_classification.helpers.classifiers import (
     test_mlp,
-    test_rfc,
     test_gbc,
     test_svm,
     test_logistic_regression,
@@ -17,8 +16,6 @@ import getopt
 def run(classifier, preprocess, optimize, tune):
     if classifier == "svm":
         method = test_svm
-    elif classifier == "rfc":
-        method = test_rfc
     elif classifier == "gbc":
         method = test_gbc
     elif classifier == 'mlp':

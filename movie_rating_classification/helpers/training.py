@@ -1,8 +1,4 @@
-from sklearn.model_selection import train_test_split
-from sklearn_pandas import DataFrameMapper
 from sklearn.preprocessing import LabelEncoder
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.decomposition import PCA
 from imblearn.combine import SMOTEENN
 
 import collections
@@ -18,58 +14,53 @@ class TrainingData:
 
     def __init__(self):
         self.X = pd.read_csv(X_FILE)
-        self.X.fillna('', inplace=True)  # can't have nan in any of the columns
         self.Y = pd.read_csv(Y_FILE)
         self.Y = np.reshape(self.Y.values, [self.Y.shape[0], ])
 
-        self.X = self.generate_features(self.X)
-
+        # Oversample minority classes using Synthetic Minority Over-sampling Technique
+        # Undersample majority classes using Edited Nearest Neighbour method
         sm = SMOTEENN()
         self.X, self.Y = sm.fit_sample(self.X, self.Y)
 
         print(collections.Counter(self.Y))
 
-        # pca = PCA()
-        # self.X = pca.fit_transform(self.X)
-
+        # Encode the four rating classes (terrible, poor, average, excellent)
+        # into integer values for testing
         label_enc = LabelEncoder()
         self.Y = label_enc.fit_transform(self.Y)
 
-    def generate_features(self, data):
-        mapper = DataFrameMapper([
-            ('belongs_to_collection', None),
-            ('budget', None),
-            ('homepage', None),
-            ('runtime', None),
-            ('spoken_languages', None),
-            ('cast_size', None),
-            ('crew_size', None),
-            ('production_score', None),
-            ('is_english', None),
-            ('is_drama', None),
-            ('is_comedy', None),
-            ('is_thriller', None),
-            ('is_action', None),
-            ('is_romance', None),
-            ('is_adventure', None),
-            ('is_crime', None),
-            ('is_science_fiction', None),
-            ('is_horror', None),
-            ('is_family', None),
-            ('is_fantasy', None),
-            ('is_mystery', None),
-            ('is_animation', None),
-            ('is_history', None),
-            ('is_music', None),
-            ('is_war', None),
-            ('is_western', None),
-            ('is_documentary', None),
-            ('is_foreign', None),
-            ('is_tv_movie', None),
-            ('prod_uk', None),
-            ('prod_usa', None),
-            ('prod_france', None),
-            ('prod_other', None),
-        ], input_df=True)
-
-        return mapper.fit_transform(data)
+        """ COLUMNS USED IN TRAINING
+        'belongs_to_collection'
+        'budget'
+        'homepage'
+        'runtime'
+        'spoken_languages'
+        'cast_size'
+        'crew_size'
+        'production_score'
+        'is_english'
+        'is_drama'
+        'is_comedy'
+        'is_thriller'
+        'is_action'
+        'is_romance'
+        'is_adventure'
+        'is_crime'
+        'is_science_fiction'
+        'is_horror'
+        'is_family'
+        'is_fantasy'
+        'is_mystery'
+        'is_animation'
+        'is_history'
+        'is_music'
+        'is_war'
+        'is_western'
+        'is_documentary'
+        'is_foreign'
+        'is_tv_movie'
+        'prod_uk'
+        'prod_usa'
+        'prod_france'
+        'prod_other'
+        """

@@ -4,7 +4,7 @@ from movie_rating_classification.helpers.data import get_data
 
 import time
 
-MIN_VOTE_COUNT = 0
+MIN_VOTE_COUNT = 500
 
 
 def classify(method, preprocess, tune):
